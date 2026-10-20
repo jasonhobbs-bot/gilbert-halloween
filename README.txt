@@ -7,3 +7,5 @@ This edition uses portraits cropped from the screenshots you provided; they are 
 Grade-level and wing placement is provisional, not verified room assignment.
 
 Photos were matched by their adjacent names in the user-provided directory screenshots. Test on iPad before student use.
+
+Teacher display names now use Mr./Ms. and surnames. Ms. is a neutral default; update individual titles in teachers.js if Miss or Mrs. is preferred.
