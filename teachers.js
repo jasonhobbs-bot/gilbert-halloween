@@ -1,13 +1,30 @@
-// GILBERT STAFF ROSTER
-// Replace each blank name with an APPROVED staff member's full name.
-// Save approved photos in a 'teachers' folder alongside index.html.
-// Example: {name:'Example Teacher', photo:'teachers/example-teacher.jpg', costume:'🧙‍♀️', clue:'I teach kindergarten.'}
-// Leave fields blank to keep the existing demo teacher role and emoji reveal.
-window.GILBERT_TEACHERS = [
-  {name:'', photo:'', costume:'🧙‍♀️', clue:''}, // Kindergarten
-  {name:'', photo:'', costume:'🧛', clue:''},   // 1st grade
-  {name:'', photo:'', costume:'👻', clue:''},   // 2nd grade
-  {name:'', photo:'', costume:'🦸', clue:''},   // 3rd grade
-  {name:'', photo:'', costume:'🧟', clue:''},   // 4th grade
-  {name:'', photo:'', costume:'🧑‍🚀', clue:''}  // 5th grade
-];
+window.GILBERT_TEACHERS = {
+  '100': {name:'', photo:'', costume:'🧙‍♀️', clue:''},
+  '110': {name:'', photo:'', costume:'🧛', clue:''},
+  '200': {name:'', photo:'', costume:'👻', clue:''},
+  '201': {name:'', photo:'', costume:'🦸', clue:''},
+  '203': {name:'', photo:'', costume:'🧟', clue:''},
+  '204': {name:'', photo:'', costume:'🧑‍🚀', clue:''},
+  '205': {name:'', photo:'', costume:'🏴‍☠️', clue:''},
+  '206': {name:'', photo:'', costume:'🎃', clue:''},
+  '207': {name:'', photo:'', costume:'🧙‍♀️', clue:''},
+  '208': {name:'', photo:'', costume:'🧛', clue:''},
+  '209': {name:'', photo:'', costume:'👻', clue:''},
+  '210': {name:'', photo:'', costume:'🦸', clue:''},
+  '211': {name:'', photo:'', costume:'🧟', clue:''},
+  '213': {name:'', photo:'', costume:'🧑‍🚀', clue:''},
+  '300': {name:'', photo:'', costume:'🏴‍☠️', clue:''},
+  '301': {name:'', photo:'', costume:'🎃', clue:''},
+  '303': {name:'', photo:'', costume:'🧙‍♀️', clue:''},
+  '305': {name:'', photo:'', costume:'🧛', clue:''},
+  '307': {name:'', photo:'', costume:'👻', clue:''},
+  '309': {name:'', photo:'', costume:'🦸', clue:''},
+  '311': {name:'', photo:'', costume:'🧟', clue:''},
+  '313': {name:'', photo:'', costume:'🧑‍🚀', clue:''},
+  '315': {name:'', photo:'', costume:'🏴‍☠️', clue:''},
+  '317': {name:'', photo:'', costume:'🎃', clue:''},
+  '320': {name:'', photo:'', costume:'🧙‍♀️', clue:''},
+  '321': {name:'', photo:'', costume:'🧛', clue:''},
+  '324': {name:'', photo:'', costume:'👻', clue:''},
+  '325': {name:'', photo:'', costume:'🦸', clue:''}
+};
