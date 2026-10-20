@@ -1,11 +1,9 @@
-GILBERT HALLOWEEN: TEACHER HALLWAYS
+Gilbert Halloween: REAL PHOTO REVEALS
 
-Upload index.html and teachers.js to the root of your GitHub Pages repository, replacing existing files.
+Upload index.html, teachers.js, and the complete photos folder to the root of your GitHub Pages repository. Do not upload only the HTML file.
 
-CHANGES: 4 classrooms per grade group; prominent room numbers replaced by pumpkin symbols; grade banners and teacher mysteries; existing quests, map, controls, audio and saved progress retained.
+This edition uses portraits cropped from the screenshots you provided; they are not high-resolution original images. Some people have no real photo in the directory (silhouette placeholders) and therefore remain emoji reveals.
 
-IMPORTANT: Actual grade-level wing locations and teacher-to-classroom assignments have NOT been verified. The grade groups shown are provisional: Kindergarten/1st/2nd in 300 Hall and 3rd/4th/5th in 200 Hall. Four extra rooms are marked Special Areas.
+Grade-level and wing placement is provisional, not verified room assignment.
 
-To add a real teacher: edit teachers.js, find the room key (e.g. 300), fill name, photo (local path or approved direct image URL), costume and clue. Until filled, the game displays Mystery Teacher and a placeholder reveal, not an invented name.
-
-The game has not been iPad-tested.
+Photos were matched by their adjacent names in the user-provided directory screenshots. Test on iPad before student use.
