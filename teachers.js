@@ -1,3 +1,6 @@
+// FOUR CLASSROOMS PER GRADE. These hallway assignments are PROVISIONAL.
+// Enter the correct teacher name, photo path, and clue for each room key.
+// Do not change room keys; they locate the correct door in the 3D school.
 window.GILBERT_TEACHERS = {
   '100': {name:'', photo:'', costume:'🧙‍♀️', clue:''},
   '110': {name:'', photo:'', costume:'🧛', clue:''},
