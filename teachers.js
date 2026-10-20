@@ -10,7 +10,7 @@ window.GILBERT_TEACHERS = {
   '204': {name: 'Ms. Langston', photo: '', costume: '🧑\u200d🚀', clue: 'This person teaches 3rd Grade at Gilbert Elementary.'},
   '205': {name: 'Ms. Langley', photo: 'photos/sarah_langley.png', costume: '🏴\u200d☠️', clue: 'This person teaches 4th Grade at Gilbert Elementary.'},
   '206': {name: 'Ms. O’Neal', photo: 'photos/kathy_oneal.png', costume: '🎃', clue: 'This person teaches 4th Grade at Gilbert Elementary.'},
-  '207': {name: 'Ms. Booker', photo: 'photos/kristie_booker.png', costume: '🧙\u200d♀️', clue: 'This person teaches 4th Grade at Gilbert Elementary.'},
+  '207': {name: 'Ms. Booker', photo: '', costume: '🧙\u200d♀️', clue: 'This person teaches 4th Grade at Gilbert Elementary.'},
   '209': {name: 'Ms. Vinyard', photo: 'photos/sherry_vinyard.png', costume: '👻', clue: 'This person teaches 5th Grade at Gilbert Elementary.'},
   '210': {name: 'Ms. Mitchell', photo: 'photos/allyson_mitchell.png', costume: '🦸', clue: 'This person teaches 5th Grade at Gilbert Elementary.'},
   '211': {name: 'Ms. Waller', photo: '', costume: '🧟', clue: 'This person teaches 5th Grade at Gilbert Elementary.'},

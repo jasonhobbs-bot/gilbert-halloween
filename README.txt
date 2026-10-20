@@ -1,11 +1,5 @@
-Gilbert Halloween: REAL PHOTO REVEALS
-
-Upload index.html, teachers.js, and the complete photos folder to the root of your GitHub Pages repository. Do not upload only the HTML file.
-
-This edition uses portraits cropped from the screenshots you provided; they are not high-resolution original images. Some people have no real photo in the directory (silhouette placeholders) and therefore remain emoji reveals.
-
-Grade-level and wing placement is provisional, not verified room assignment.
-
-Photos were matched by their adjacent names in the user-provided directory screenshots. Test on iPad before student use.
-
-Teacher display names now use Mr./Ms. and surnames. Ms. is a neutral default; update individual titles in teachers.js if Miss or Mrs. is preferred.
+Gilbert Halloween: genuine screenshot portrait crops + illustrated Halloween disguises.
+Upload index.html, teachers.js, photos/, and costumes/ to your GitHub Pages repository.
+Photos are cropped from the screenshots provided by the user, not AI-generated. Some staff portraits are unavailable, so no photo is shown rather than using a fake one.
+Costume illustrations are stylized SVGs, not actual photos of staff in costume.
+Classroom assignments are provisional. Test on iPad.
