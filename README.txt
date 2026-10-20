@@ -1,11 +1,7 @@
-GILBERT GATORS FULL SCHOOL - FIRST EXPANSION
+GILBERT HALLOWEEN — QUEST UPGRADE
 
-Upload index.html and teachers.js to the root of your GitHub Pages repository.
+Upload BOTH index.html and teachers.js to the ROOT of your GitHub Pages repository.
 
-Includes: 100 Hall, 200 Hall, 300 Hall, Media Center, Gym, Cafeteria, Kitchen; 28 numbered classroom doors; mini-map; original audio and mask reveal; lighting fix.
+New: 12 collectible pumpkins (+10 candy each), quest tracker and Quest button, saved pumpkin progress, gym court and cafeteria furniture, champion finale after all 12 pumpkins and 28 mysteries. Existing music, lighting, map, joystick, classroom masks and teacher.js support preserved.
 
-IMPORTANT: This is a stylized approximation based on the provided floor-plan image, NOT an architectural reconstruction. Staff assignments are intentionally placeholders. Add names and approved photos to teachers.js. No student information is used.
-
-The 30–40 minute target is NOT validated. The new areas are navigable, but gym/cafeteria mini-games and outdoor locations have not been added.
-
-Test on desktop and iPad before classroom use.
+IMPORTANT: This remains a prototype. Teacher names/photos are placeholders until supplied and approved. 30–40 minute playtime is not verified. The source was checked for syntax; test on an iPad before student use.
