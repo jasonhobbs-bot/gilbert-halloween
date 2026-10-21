@@ -199,61 +199,6 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  box('schoolWelcomeFrame',0,3.25,-5.05,6.0,.30,.20,atriumBlue);
  const welcome=textPlane('GO GATORS!',0,3.35,-5.19,5.1,.55,true);
  welcome.material.backFaceCulling=false;
-
- // School makeover 2: school architecture and warm lived-in detail, kept out of walkable lanes.
- const skyWhite=mat('schoolCeiling','#f5f2e8'),tileEdge=mat('ceilingGrid','#b9bec3'),navy=mat('schoolNavy','#123d70'),lockerBlue=mat('lockerBlue','#4d80a9'),lockerDark=mat('lockerSeams','#244f72'),displayGold=mat('displayGold','#f0c35c'),chalk=mat('chalkboard','#245e54'),artPink=mat('artPink','#ee85a8'),artTeal=mat('artTeal','#73c7c5'),artPurple=mat('artPurple','#b58adb');
- // Narrow ceiling panels above corridors; no opaque giant roof that would obscure camera.
- for(const hx of [-15,15])for(let zz=-42;zz<2;zz+=4){
-   for(let xx=hx-3;xx<=hx+3;xx+=2)box('acousticCeilingTile',xx,5.72,zz,1.94,.045,3.94,skyWhite);
-   box('ceilingTbar',hx,5.68,zz,6.15,.025,.04,tileEdge);
- }
- // Wall-mounted lockers and cubbies in grade wings; shallow to keep corridors clear.
- for(const hx of [-15,15])for(const zz of [-38,-28,-18,-8]){
-   const side=hx<0?1:-1,wx=hx+side*3.08;
-   for(let j=0;j<4;j++){
-     const z=zz+j*.67;
-     box('blueStudentCubbies',wx,1.42,z,.23,2.12,.61,lockerBlue);
-     box('lockerTopVent',wx-side*.14,1.97,z,.02,.08,.36,lockerDark);
-     box('lockerHandle',wx-side*.15,1.32,z+.17,.03,.16,.045,displayGold);
-   }
- }
- // Colorful school murals and bulletin displays on the courtyard edges.
- for(const side of [-1,1])for(const zz of [-37,-27,-17,-9]){
-   const wx=side*10.72;
-   box('displayBoardBacking',wx,2.35,zz,.14,1.45,4.2,navy);
-   box('displayBoardCenter',wx-side*.08,2.35,zz,.06,1.23,3.95,chalk);
-   for(let k=0;k<5;k++){
-     const palette=[displayGold,artPink,artTeal,artPurple,skyWhite];
-     box('studentGalleryArt',wx-side*.13,2.3+(k%2)*.35,zz-1.45+k*.70,.025,.42,.48,palette[k]);
-   }
- }
- // Indoor courtyard is a school commons, not a dark void: rug islands and reading nooks.
- const rugBlue=mat('schoolRugBlue','#24659b'),rugCream=mat('schoolRugCream','#f5d9a3');
- for(const zz of [-35,-24,-13]){
-   box('commonsRug',0,.035,zz,7.5,.045,4.1,rugBlue);
-   box('commonsRugInset',0,.064,zz,6.8,.012,3.4,rugCream);
-   box('commonsRugCenter',0,.078,zz,6.15,.008,2.8,rugBlue);
- }
- // Corridor door number labels, hanging bats, and autumn leaves add variety without visual clutter.
- for(let i=0;i<doors.length;i++){
-   const d=doors[i],side=(d.x===-17||d.x===13)?-1:1,cx=d.x<0?-15:15;
-   const xx=cx+side*3.38;
-   const plate=textPlane(String(d.room||100+i),xx-side*.17,3.76,d.z,1.10,.36,side<0);
-   plate.rotation.y=side<0?0:Math.PI;
-   const nameplate=textPlane('MYSTERY ROOM',xx-side*.18,3.39,d.z,1.35,.27,side<0);
-   nameplate.rotation.y=side<0?0:Math.PI;
- }
- // Warm overhead light pools brighten the long corridors; one light per hallway segment.
- for(const xx of [-15,15,0])for(let zz=-39;zz<=-7;zz+=8){
-   const l=new BABYLON.PointLight('warmHallLight',new BABYLON.Vector3(xx,5.2,zz),scene);
-   l.diffuse=new BABYLON.Color3(1,.90,.73);l.intensity=.26;l.range=11;
- }
- // Add bright accent floor markings to help children navigate different wings.
- const westMark=mat('westWingStripe','#3b83c1'),eastMark=mat('eastWingStripe','#ed9e48');
- for(const [xx,mark] of [[-15,westMark],[15,eastMark]])for(let zz=-41;zz<=0;zz+=2){
-   box('hallwayWayfinding',xx-2.9,.018,zz,.11,.013,1.7,mark);
-   box('hallwayWayfinding',xx+2.9,.018,zz,.11,.013,1.7,mark);
- }
  player=new BABYLON.TransformNode('player',scene);
  let body=ball('gatorBody',0,1.03,0,.54,green);body.scaling.set(.85,1.17,.7);body.parent=player;
  let head=ball('gatorHead',0,1.95,-.17,.45,green);head.parent=player;
