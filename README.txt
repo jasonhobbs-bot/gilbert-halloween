@@ -1,1 +1,1 @@
-FIXED two JavaScript syntax errors stopping the game buttons. Includes Captain Gator 2.0, 60 costume cards, embedded staff portraits. Upload index.html to GitHub and refresh with ?v=6.
+Upload index.html to GitHub. Replaces confusing cartoon costume heads with 60 colorful, kid-friendly themed costume cards. Repairs the gator tail with overlapping tapered segments connected to the body, no hole. Teacher photo reveals remain embedded. Tested JavaScript syntax, not live gameplay. Open ?v=7 after deploying.
