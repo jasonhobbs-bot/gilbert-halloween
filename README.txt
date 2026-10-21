@@ -1,1 +1,1 @@
-Upload index.html to the root of your GitHub Pages repository. New: knock -> Trick or Treat -> teacher costume clues -> shuffled answers -> candy and mystery clue. Staff roles are placeholders, not verified real names.
+Captain Gator Halloween Quest: 3x longer levels, candy heals 1 heart per 10 candy earned (maximum 5). Upload index.html to GitHub Pages. All other gameplay retained.
