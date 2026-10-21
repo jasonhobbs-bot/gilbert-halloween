@@ -1,1 +1,1 @@
-Replace index.html in your GitHub Pages repository. Visual school makeover: tiled indoor courtyard, school displays, planters, classroom door windows, bulletin boards, overhead light fixtures, school welcome feature. Existing game logic preserved.
+Gilbert Halloween school redesign: brighter hallways, ceiling grid, school lockers, display boards, rugs, door room-number signs, lighting, and navigation stripes. Replace index.html in GitHub Pages. Existing game modes preserved.
