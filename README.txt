@@ -1,1 +1,1 @@
-Fixed a duplicate JavaScript variable declaration that prevented the school redesign from loading. Replace index.html in the GitHub repository. Clear browser cache or use ?v=11.
+Clear-view school rebuild based on last stable forest and mini-games edition. Replaced dark central void with tiled commons, low reading rugs and student displays, glass classroom door details, closer unobstructed camera, randomized teacher answers. Teachers, ghosts, mini-games, mystery and forest retained. Replace GitHub index.html. Browser gameplay not verified.
