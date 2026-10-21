@@ -71,6 +71,14 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  const ambient=new BABYLON.HemisphericLight('softHallLighting',new BABYLON.Vector3(0,1,0),scene);ambient.intensity=.77;
  const accent=new BABYLON.PointLight('warmAccent',new BABYLON.Vector3(0,4,-5),scene);accent.diffuse=new BABYLON.Color3(1,.55,.27);accent.intensity=.55;accent.range=22;
  const floor=mat('whiteTile','#ddd9d4'),seam=mat('tileLines','#aaa8a9'),wall=mat('whiteConcrete','#ddd9d1'),stripe=mat('GilbertBlue','#215d9d'),doorMat=mat('brownWood','#795035'),frame=mat('brownFrame','#473024'),orange=mat('HalloweenOrange','#e58727'),purple=mat('HalloweenPurple','#6e3791'),dark=mat('signDark','#25213c'),green=mat('GatorGreen','#43ad65'),belly=mat('GatorBelly','#b7dc87'),white=mat('eyeWhite','#fffdf4'),black=mat('eyeBlack','#171323');
+ const specialRooms=[
+  {name:'Gym',x:60,z:0,w:19,d:17,entrance:[13,12],spawn:[60,5],icon:'🏀'},
+  {name:'Art Room',x:85,z:0,w:17,d:17,entrance:[-15,-12],spawn:[85,5],icon:'🎨'},
+  {name:'Agriculture Room',x:110,z:0,w:17,d:17,entrance:[15,-24],spawn:[110,5],icon:'🌱'},
+  {name:'Main Office',x:135,z:0,w:17,d:17,entrance:[0,5],spawn:[135,5],icon:'🏫'},
+  {name:'Media Center',x:160,z:0,w:21,d:19,entrance:[0,-2],spawn:[160,5],icon:'📚'}
+ ];
+ let specialNear=-1,insideSpecial=-1;
  const segments=[
   {name:'Media Center',x:0,z:0,w:34,d:10},
   {name:'300 Hall',x:-15,z:-22,w:7,d:52},
@@ -80,7 +88,7 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
   {name:'Cafeteria',x:-12,z:20,w:20,d:18},
   {name:'Kitchen',x:-12,z:33,w:14,d:8}
  ];
- function inside(x,z,margin=0){return segments.some(a=>Math.abs(x-a.x)<=a.w/2-margin&&Math.abs(z-a.z)<=a.d/2-margin)}
+ function inside(x,z,margin=0){return specialRooms.some(a=>Math.abs(x-a.x)<=a.w/2-margin&&Math.abs(z-a.z)<=a.d/2-margin)||segments.some(a=>Math.abs(x-a.x)<=a.w/2-margin&&Math.abs(z-a.z)<=a.d/2-margin)}
  segments.forEach((a,i)=>{
   box('floor_'+a.name,a.x,-.17,a.z,a.w,.3,a.d,floor);
   // Open roof for clear camera visibility; no ceiling occlusion.
@@ -117,6 +125,47 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  for(const [x,z] of [[-20,27],[-4,27],[4,3],[-4,-3],[22,27],[5,27]])pumpkin(x,z,1.2);
  // Grade-level wayfinding banners; four doors make a grade group.
  [['KINDERGARTEN',-15,-8],['1ST GRADE',-15,-20],['2ND GRADE',-15,-32],['3RD GRADE',15,-8],['4TH GRADE',15,-20],['5TH GRADE',15,-32]].forEach(([name,x,z])=>{textPlane(name,x,4.9,z,3.8,.55,true)});
+ // Five genuine walk-in 3D activity rooms, reached by labeled school doorways.
+ const shelfWood=mat('specialWood','#9b6b42'),bookBlue=mat('bookBlue','#2867a7'),bookRed=mat('bookRed','#b74c53'),bookGold=mat('bookGold','#e5b94b'),leaf=mat('leaf','#329358'),pot=mat('pot','#9e5b36'),glassBlue=mat('window','#83b6d2'),deskTop=mat('desk','#d6b98c');
+ specialRooms.forEach((r,i)=>{
+  box('specialFloor '+r.name,r.x,-.16,r.z,r.w,.28,r.d,commonsCream);
+  box('specialCarpet '+r.name,r.x,.005,r.z,r.w-2,.018,r.d-2,i===0?court:commonsBlue);
+  // Three enclosing walls; front is open to avoid obscuring the third-person camera.
+  box('specialBack '+r.name,r.x,1.7,r.z-r.d/2,r.w,3.4,.24,wall);
+  for(const side of [-1,1])box('specialSide '+r.name,r.x+side*r.w/2,1.7,r.z,.24,3.4,r.d,wall);
+  box('specialBackStripe '+r.name,r.x,1.25,r.z-r.d/2+.15,r.w,.3,.05,stripe);
+  const sign=textPlane(r.name.toUpperCase(),r.x,3.65,r.z-r.d/2+.3,6,.8);sign.material.backFaceCulling=false;
+  for(const dx of [-5,0,5])box('specialCeilingLight',r.x+dx,4.2,r.z-1,2,.08,.8,commonsGold);
+  if(i===0){ // Gym: full basketball markings, bleachers and two hoops
+   box('gymCenterStripe',r.x,.028,r.z,14,.035,.08,white);
+   const ring=BABYLON.MeshBuilder.CreateTorus('centerCourt',{diameter:4,thickness:.075,tessellation:40},scene);ring.position.set(r.x,.05,r.z);ring.rotation.x=Math.PI/2;ring.material=white;
+   for(const dx of [-7,7]){box('gymBoard',r.x+dx,2.65,r.z,.18,1.6,2.5,white);box('gymRim',r.x+dx+(dx<0?.5:-.5),2.05,r.z,.7,.08,.7,orange)}
+   for(const z of [-5,-3])box('gymBleachers',r.x, .35+(z+5)*.12,z+r.z,11,.65,.85,shelfWood);
+  }else if(i===1){ // Art studio
+   for(const dx of [-4,4])for(const dz of [-3,3]){box('artTable',r.x+dx,.8,r.z+dz,4,.14,2,deskTop);for(const ox of [-1.6,1.6])box('artLeg',r.x+dx+ox,.4,r.z+dz,.13,.8,.13,shelfWood)}
+   for(let j=0;j<7;j++){const m=[orange,purple,bookBlue,leaf,bookGold][j%5];box('artCanvas',r.x-6+j*2,1.8,r.z-7.9,.95,1.25,.08,m)}
+  }else if(i===2){ // Agriculture lab
+   for(const dx of [-5,0,5]){box('agWorkBench',r.x+dx,.75,r.z,3.7,.14,2.4,deskTop);for(const dz of [-.7,.7]){box('agPot',r.x+dx,1,r.z+dz,.65,.45,.65,pot);ball('agPlant',r.x+dx,1.45,r.z+dz,.48,leaf)}}
+   for(const dx of [-5,0,5])box('agRaisedBed',r.x+dx,.3,r.z-5,3,.6,1.5,pot);
+  }else if(i===3){ // Front office
+   box('receptionCounter',r.x,.95,r.z-2,10,1.8,1.5,deskTop);
+   for(const dx of [-5,5]){box('officeCabinet',r.x+dx,1.2,r.z-6,2,2.4,1.2,shelfWood);box('officeScreen',r.x+dx,.8,r.z-1,.85,.75,.1,dark)}
+   box('welcomeMat',r.x,.03,r.z+4,7,.035,2,bookBlue);
+  }else{ // Media center: aisles of bookcases and reading tables
+   for(const dx of [-7,-3,3,7]){box('libraryShelf',r.x+dx,1.45,r.z-3,1.25,2.9,7,shelfWood);for(let j=0;j<5;j++)box('libraryBooks',r.x+dx, .5+j*.45,r.z-3,1.1,.27,6,j%2?bookBlue:bookRed)}
+   for(const dx of [-4,4]){box('readingTable',r.x+dx,.7,r.z+5,4,.14,2,deskTop);box('readingLeg',r.x+dx,.35,r.z+5,.16,.7,.16,shelfWood)}
+  }
+  // Visible glowing return marker near the room entrance.
+  box('returnMat '+r.name,r.x,.045,r.z+ r.d/2-2,4,.05,1.5,orange);
+  textPlane('EXIT',r.x,2.3,r.z+r.d/2-1.2,2.6,.65).material.backFaceCulling=false;
+ });
+ // School-side doorway markers: stepping near them enables the Visit button.
+ specialRooms.forEach(r=>{
+  const [x,z]=r.entrance;
+  box('portalMat '+r.name,x,.03,z,2.5,.055,1.5,orange);
+  const p=textPlane(r.icon+' '+r.name.toUpperCase(),x,3.1,z,4.2,.65);p.material.backFaceCulling=false;
+  const glow=ball('portalBeacon',x,2.25,z,.32,bookGold);glow.visibility=.7;
+ });
  // Room doors line the sides of the 200 and 300 wings.
  doors.forEach((d,i)=>{
   const isWest=d.x<0, side=(d.x===-17||d.x===13)?-1:1;
@@ -292,11 +341,13 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
   // Collect nearby pumpkins. Save independently from classroom progress.
   for(let i=hiddenPickups.length-1;i>=0;i--){const h=hiddenPickups[i];h.node.rotation.y+=dt*1.2;h.node.position.y=Math.sin(performance.now()*.002+h.id)*.12;if(Math.hypot(player.position.x-h.x,player.position.z-h.z)<1.25){hiddenFound.add(h.id);candy+=10;h.node.dispose();hiddenPickups.splice(i,1);try{localStorage.setItem('gilbertHiddenCandy',JSON.stringify([...hiddenFound]))}catch{}save();updateScore();sfx('candy');$('hint').textContent='🎉 Hidden pumpkin found! +10 candy';lastCollect=performance.now()}}
   
+  insideSpecial=specialRooms.findIndex(r=>Math.abs(player.position.x-r.x)<r.w/2&&Math.abs(player.position.z-r.z)<r.d/2);
+  specialNear=insideSpecial>=0?insideSpecial:specialRooms.findIndex(r=>Math.hypot(player.position.x-r.entrance[0],player.position.z-r.entrance[1])<2.6);
   near=-1;let dist=2.9;
   doorMeshes.forEach((d,i)=>{const n=Math.hypot(player.position.x-d.x,player.position.z-d.z);if(n<dist){dist=n;near=i}});
-  $('action').disabled=near<0;
-  $('action').innerHTML=near<0?'🚪<br>Knock!':solved.has(near)?'⭐<br>Visit':'🍬<br>Knock!';
-  if(performance.now()-lastCollect>2000)$('hint').textContent=near>=0?'🎃 '+doors[near].grade+' — Tap Knock!':'Explore grade-level halls • Meet mystery teachers';
+  $('action').disabled=near<0&&specialNear<0;
+  $('action').innerHTML=specialNear>=0?(insideSpecial>=0?'↩️<br>Exit':'⭐<br>Enter'):near<0?'🚪<br>Knock!':solved.has(near)?'⭐<br>Visit':'🍬<br>Knock!';
+  if(performance.now()-lastCollect>2000)$('hint').textContent=specialNear>=0?(insideSpecial>=0?'Explore '+specialRooms[specialNear].name+' • Tap Exit to return':'Tap Enter to explore '+specialRooms[specialNear].name):near>=0?'🎃 '+doors[near].grade+' — Tap Knock!':'Explore grade-level halls • Meet mystery teachers';
   renderMap();
  });
  engine.runRenderLoop(()=>scene.render());window.addEventListener('resize',()=>engine.resize());
@@ -306,7 +357,7 @@ const EMBEDDED_COSTUMES=["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 function costumeImage(i){return EMBEDDED_COSTUMES[i%EMBEDDED_COSTUMES.length]}function openDoor(){if(near<0)return;sfx('knock');setTimeout(()=>sfx('creak'),500);active=false;let d=doors[near],person=staff[near];$('dialog').style.display='flex';$('costumeArt').onerror=()=>{$('costumeArt').style.display='none';$('maskFace').textContent='🎭'};$('costumeArt').style.display='block';$('costumeArt').src=costumeImage(near);$('costumeArt').alt='Halloween disguise';
 const face=$('teacherFace'),photo=$('teacherPhoto');face.classList.remove('has-photo');photo.removeAttribute('src');
 if(person.photo){photo.onload=()=>face.classList.add('has-photo');photo.onerror=()=>face.classList.remove('has-photo');photo.src=person.photo;}
-$('revealStage').classList.remove('revealed');$('revealLabel').textContent='WHO IS BEHIND THE MASK?';$('teacherName').textContent='';$('question').textContent=`Who is behind the Halloween mask?`;$('clue').textContent='🔍 CLUE: '+person.clue;$('status').textContent=solved.has(near)?'⭐ You found this teacher before! Guess again to see the reveal.':'';$('choices').innerHTML='';getChoices(near).forEach(c=>{let b=document.createElement('button');b.className='option';b.textContent=c;b.onclick=()=>{if(c===person.name){if(!solved.has(near)){solved.add(near);candy+=25;save();updateScore()}$('status').textContent='🎉 CORRECT! The mask is coming off!';$('choices').innerHTML='';sfx('reveal');setTimeout(()=>sfx('candy'),500);$('revealStage').classList.add('revealed');$('revealLabel').textContent='🎉 MASK REVEALED!';$('teacherName').textContent=person.configured?person.name:'Staff member revealed!';$('status').textContent=solved.size===doors.length?'🏆 ALL ROOMS FOUND! You escaped the Haunted Hallway!':'🍬 Mystery solved! You earned candy on your first discovery.'}else{sfx('wrong');$('status').textContent='👻 Not quite! Try another costume guess.'}};$('choices').appendChild(b)})}function closeDoor(){$('dialog').style.display='none';active=true}function setupJoy(){const j=$('joy'),k=$('knob');let pointer=null;function move(e){let r=j.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),max=r.width*.31,l=Math.hypot(x,y),scale=l>max?max/l:1;x*=scale;y*=scale;joyX=x/max;joyY=y/max;k.style.transform=`translate(${x}px,${y}px)`}j.addEventListener('pointerdown',e=>{pointer=e.pointerId;j.setPointerCapture(pointer);move(e)});j.addEventListener('pointermove',e=>{if(pointer===e.pointerId)move(e)});function end(e){if(pointer!==e.pointerId)return;pointer=null;joyX=joyY=0;k.style.transform='translate(0,0)'}j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end)}$('start').onclick=()=>{if(!ready){$('loading').textContent='Still loading the 3D hallway. Please wait a moment.';return;}audioInit();$('overlay').style.display='none';active=true;musicStart()};$('action').onclick=openDoor;$('close').onclick=closeDoor;window.addEventListener('keydown',e=>{keys[e.key]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key===' '&&active)openDoor()});window.addEventListener('keyup',e=>keys[e.key]=false);setupJoy();$('helpButton').onclick=()=>{$('questPanel').style.display='block';updateQuest()};$('questClose').onclick=()=>{$('questPanel').style.display='none'};$('mapButton').onclick=()=>{$('mapPanel').style.display=$('mapPanel').style.display==='none'?'block':'none'};if(!window.BABYLON){$('loading').textContent='Could not load 3D engine. Check your internet connection.';return}try{make()}catch(e){$('loading').textContent='3D startup error: '+e.message;console.error(e)}})();
+$('revealStage').classList.remove('revealed');$('revealLabel').textContent='WHO IS BEHIND THE MASK?';$('teacherName').textContent='';$('question').textContent=`Who is behind the Halloween mask?`;$('clue').textContent='🔍 CLUE: '+person.clue;$('status').textContent=solved.has(near)?'⭐ You found this teacher before! Guess again to see the reveal.':'';$('choices').innerHTML='';getChoices(near).forEach(c=>{let b=document.createElement('button');b.className='option';b.textContent=c;b.onclick=()=>{if(c===person.name){if(!solved.has(near)){solved.add(near);candy+=25;save();updateScore()}$('status').textContent='🎉 CORRECT! The mask is coming off!';$('choices').innerHTML='';sfx('reveal');setTimeout(()=>sfx('candy'),500);$('revealStage').classList.add('revealed');$('revealLabel').textContent='🎉 MASK REVEALED!';$('teacherName').textContent=person.configured?person.name:'Staff member revealed!';$('status').textContent=solved.size===doors.length?'🏆 ALL ROOMS FOUND! You escaped the Haunted Hallway!':'🍬 Mystery solved! You earned candy on your first discovery.'}else{sfx('wrong');$('status').textContent='👻 Not quite! Try another costume guess.'}};$('choices').appendChild(b)})}function closeDoor(){$('dialog').style.display='none';active=true}function setupJoy(){const j=$('joy'),k=$('knob');let pointer=null;function move(e){let r=j.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),max=r.width*.31,l=Math.hypot(x,y),scale=l>max?max/l:1;x*=scale;y*=scale;joyX=x/max;joyY=y/max;k.style.transform=`translate(${x}px,${y}px)`}j.addEventListener('pointerdown',e=>{pointer=e.pointerId;j.setPointerCapture(pointer);move(e)});j.addEventListener('pointermove',e=>{if(pointer===e.pointerId)move(e)});function end(e){if(pointer!==e.pointerId)return;pointer=null;joyX=joyY=0;k.style.transform='translate(0,0)'}j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end)}$('start').onclick=()=>{if(!ready){$('loading').textContent='Still loading the 3D hallway. Please wait a moment.';return;}audioInit();$('overlay').style.display='none';active=true;musicStart()};$('action').onclick=()=>{if(specialNear>=0){const r=specialRooms[specialNear];if(insideSpecial>=0){player.position.set(r.entrance[0],0,r.entrance[1]+3.2)}else{player.position.set(r.spawn[0],0,r.spawn[1]);}near=-1;specialNear=-1;sfx('creak');return;}openDoor()};$('close').onclick=closeDoor;window.addEventListener('keydown',e=>{keys[e.key]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key===' '&&active)openDoor()});window.addEventListener('keyup',e=>keys[e.key]=false);setupJoy();$('helpButton').onclick=()=>{$('questPanel').style.display='block';updateQuest()};$('questClose').onclick=()=>{$('questPanel').style.display='none'};$('mapButton').onclick=()=>{$('mapPanel').style.display=$('mapPanel').style.display==='none'?'block':'none'};if(!window.BABYLON){$('loading').textContent='Could not load 3D engine. Check your internet connection.';return}try{make()}catch(e){$('loading').textContent='3D startup error: '+e.message;console.error(e)}})();
 </script><div id="buildMarker" style="position:fixed;bottom:5px;right:8px;z-index:9999;color:#fff;background:#153b27c9;border:1px solid #f5c05c;border-radius:6px;padding:3px 7px;font:11px Arial;pointer-events:none">🐊 TAIL FIX • 60 KID-FRIENDLY COSTUMES</div><style>
 #adventureHUD{position:fixed;top:74px;right:12px;z-index:15;background:#241438ee;border:2px solid #ffc45c;border-radius:14px;padding:9px;color:white;font:bold 13px Arial;max-width:245px}#adventureHUD button{background:#f6a738;border:0;border-radius:8px;padding:8px;margin:4px;font-weight:bold;cursor:pointer}#adventurePanel{position:fixed;inset:0;z-index:120;background:#10091bdb;display:none;align-items:center;justify-content:center;padding:15px}#adventureCard{background:#29183e;border:3px solid #ffc45c;border-radius:20px;color:white;padding:20px;max-width:490px;width:95%;text-align:center;font:17px Arial;box-sizing:border-box}#adventureCard h2{color:#ffc45c;margin:5px}#adventureCard button{background:#f7ab3f;border:2px solid #ffda89;border-radius:10px;padding:12px;margin:7px;font-weight:800;font-size:17px;cursor:pointer}#adventureGame{width:100%;height:270px;touch-action:none;border-radius:12px;background:#130b23}#ghostAlert{position:fixed;top:17%;left:50%;transform:translateX(-50%);z-index:40;background:#29183e;color:white;border:2px solid #ffc45c;border-radius:15px;padding:12px;font:bold 18px Arial;display:none;pointer-events:none}
 </style>
