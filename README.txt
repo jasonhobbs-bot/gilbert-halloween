@@ -1,1 +1,1 @@
-Replace index.html in your GitHub Pages repository. Visual school makeover: tiled indoor courtyard, school displays, planters, classroom door windows, bulletin boards, overhead light fixtures, school welcome feature. Existing game logic preserved.
+Fixed a duplicate JavaScript variable declaration that prevented the school redesign from loading. Replace index.html in the GitHub repository. Clear browser cache or use ?v=11.
