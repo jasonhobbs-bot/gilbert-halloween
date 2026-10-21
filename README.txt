@@ -1,1 +1,1 @@
-Captain Gator 2.0: improved long alligator snout, nostrils, lower jaw, teeth, eyebrow ridges, fingers, toes, back spikes, pirate uniform and gold badge. No cape. Includes all 60 costumes and embedded staff portraits. Replace index.html in GitHub and visit game with ?v=5.
+FIXED two JavaScript syntax errors stopping the game buttons. Includes Captain Gator 2.0, 60 costume cards, embedded staff portraits. Upload index.html to GitHub and refresh with ?v=6.
