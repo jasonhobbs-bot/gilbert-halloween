@@ -1,1 +1,1 @@
-Clear-view school rebuild based on last stable forest and mini-games edition. Replaced dark central void with tiled commons, low reading rugs and student displays, glass classroom door details, closer unobstructed camera, randomized teacher answers. Teachers, ghosts, mini-games, mystery and forest retained. Replace GitHub index.html. Browser gameplay not verified.
+Fixed loading error: commons material variables were referenced before initialization. Replace GitHub index.html with this file.

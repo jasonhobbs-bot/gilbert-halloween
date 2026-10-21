@@ -125,6 +125,7 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  for(const [x,z] of [[-20,27],[-4,27],[4,3],[-4,-3],[22,27],[5,27]])pumpkin(x,z,1.2);
  // Grade-level wayfinding banners; four doors make a grade group.
  [['KINDERGARTEN',-15,-8],['1ST GRADE',-15,-20],['2ND GRADE',-15,-32],['3RD GRADE',15,-8],['4TH GRADE',15,-20],['5TH GRADE',15,-32]].forEach(([name,x,z])=>{textPlane(name,x,4.9,z,3.8,.55,true)});
+ const commonsTile=mat('commonsBrightTile','#e5e7e8'),commonsBlue=mat('commonsGatorBlue','#2468a1'),commonsGold=mat('commonsGold','#e4b849'),commonsCream=mat('commonsCream','#f8f2e7');
  // Five genuine walk-in 3D activity rooms, reached by labeled school doorways.
  const shelfWood=mat('specialWood','#9b6b42'),bookBlue=mat('bookBlue','#2867a7'),bookRed=mat('bookRed','#b74c53'),bookGold=mat('bookGold','#e5b94b'),leaf=mat('leaf','#329358'),pot=mat('pot','#9e5b36'),glassBlue=mat('window','#83b6d2'),deskTop=mat('desk','#d6b98c');
  specialRooms.forEach((r,i)=>{
@@ -199,7 +200,7 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  for(let z=-42;z<4;z+=7){for(let x of [-15,15]){for(let j=0;j<5;j++){const f=box('HalloweenBanner',x-2+j,4.85,z,.55,.4,.06,j%2?orange:purple);f.rotation.z=(j-2)*.08}}}
 
  // Clear-view school commons: floor-level details only, never tall camera blockers.
- const commonsTile=mat('commonsBrightTile','#e5e7e8'),commonsBlue=mat('commonsGatorBlue','#2468a1'),commonsGold=mat('commonsGold','#e4b849'),commonsCream=mat('commonsCream','#f8f2e7');
+
  box('schoolCommonsFloor',0,-.17,-24,21.5,.30,35.5,commonsTile);
  // Thin tile grout and painted school-color floor paths are intentionally flat.
  for(let x=-10;x<=10;x+=2)box('commonsTileGroutX',x,-.008,-24,.014,.008,35.2,seam);
