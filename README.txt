@@ -1,1 +1,1 @@
-Replace the index.html in your GitHub Pages repository with this version. Solve the Golden Gator mystery to unlock the Haunted Forest. The upgraded Captain Gator has a smooth continuous tail, visible eyes and extra pirate details. Test on iPad and refresh browser cache.
+Upgrade: more school Halloween signs and lanterns; 13x13 forest maze with 3 moving ghosts, 3 hearts, hazards and 3 lanterns; improved candy catch and added pumpkin target toss (4 mini-games). Upload index.html only. Browser/iPad gameplay not verified. Use ?v=9 to avoid cached versions.
