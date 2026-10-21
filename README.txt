@@ -1,1 +1,1 @@
-Captain Gator Halloween Quest: 3x longer levels, candy heals 1 heart per 10 candy earned (maximum 5). Upload index.html to GitHub Pages. All other gameplay retained.
+Replace the root index.html in the GitHub Pages repository with this file. Doorways have safe zones; ghost and pumpkin enemies are more widely spaced. Browser testing still recommended.

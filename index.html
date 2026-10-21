@@ -22,20 +22,26 @@ function toggleMusic(){musicEnabled=!musicEnabled;document.getElementById('sound
 document.getElementById('soundToggle').addEventListener('click',()=>{initAudio();toggleMusic()});
 addEventListener('pointerdown',()=>{if(musicEnabled)initAudio()},{passive:true});
 addEventListener('keydown',()=>{if(musicEnabled)initAudio()},{passive:true});
-const worlds=[['Haunted School','#4b3a90','#ecab6c','🏫'],['Pumpkin Patch','#74427d','#ffc06c','🎃'],['Ghostly Forest','#263c73','#83c9c5','🌲'],['Candy Factory','#553a94','#ff8fc3','🍭'],['Haunted Castle','#352653','#c6a7ff','🏰'],['Golden Gator Rescue','#8c3b5a','#ffd476','🏆']];const storageKey='gilbert-gator-platformer-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){}let unlocked=Math.max(0,Math.min(5,saved.unlocked||0)),totalCandy=saved.candy||0,clueSet=new Set(saved.clues||[]),world=0,level=0,mode='menu',camera=0,frame=0,hearts=5,candyTowardHeart=0,checkpoint=80,invincible=0,ghosts=[],throwers=[],projectiles=[],candies=[],platforms=[],doors=[],particles=[],decor=[],player={x:80,y:340,vx:0,vy:0,ground:false,face:1},keys={left:false,right:false,jump:false},jumpLatch=false,levelEnd=3100;function save(){try{localStorage.setItem(storageKey,JSON.stringify({unlocked,candy:totalCandy,clues:[...clueSet]}))}catch(e){}}function ui(){document.getElementById('worldLabel').textContent=`${world+1}-${level+1} • ${worlds[world][0]}`;document.getElementById('candy').textContent=totalCandy;document.getElementById('hearts').textContent=hearts;document.getElementById('clues').textContent=clueSet.size}
-function button(text,fn,cls=''){let b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=fn;return b}function show(title,body,build){mode='pause';overlay.classList.remove('hidden');panel.replaceChildren();let h=document.createElement('h1');h.textContent=title;let p=document.createElement('p');p.textContent=body;panel.append(h,p);if(build)build(panel)}function hide(){overlay.classList.add('hidden');mode='play'}function menu(){show('🐊 Captain Gator’s Halloween Quest','Six spooky worlds • triple-length levels, candy heals hearts, moving platforms, pumpkin-throwing enemies, crumbling bridges, spring pads, candy, and teacher mysteries!',p=>{let d=document.createElement('div');d.className='worlds';worlds.forEach((w,i)=>{let b=button(`${w[3]} WORLD ${i+1}\n${w[0]} ${i>unlocked?'🔒':''}`,()=>{world=i;level=0;start()},'');b.style.whiteSpace='pre-line';b.disabled=i>unlocked;d.append(b)});p.append(d);let note=document.createElement('p');note.className='note';note.textContent='NEW: Collect 10 candy to recover 1 heart (maximum 5). Every level is 3× longer, with more checkpoints, doors, ghosts, and hazards! Blue platforms move, cracked bridges collapse, green spring pads bounce you, and pumpkin monsters throw projectiles! Move with A/D or arrows, jump with Space, knock with E. iPad controls are on screen.';p.append(note)})}
-function rand(n){let x=Math.sin(n*127.1+world*311.7+level*17.3)*43758.5453;return x-Math.floor(x)}function makeLevel(){hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;platforms.push({x:-100,y:465,w:900,h:80});for(let x=800,i=0;x<levelEnd+350;x+=390,i++){let gap=level===0?85:105+level*17;platforms.push({x:x+gap,y:465,w:390-gap,h:80});if(i%2===0)platforms.push({x:x+130,y:355-(i%3)*24,w:155,h:18});if(i%3===1)platforms.push({x:x+25,y:290,w:105,h:18})}for(let x=180,i=0;x<levelEnd-80;x+=115,i++){let y=(i%5===0)?300:410-(i%4)*26;candies.push({x,y,taken:false,phase:rand(i)*7})}for(let x=620,i=0;x<levelEnd-160;x+=470,i++)ghosts.push({x,y:405,base:x,phase:i*2.1});for(let x=350,i=0;x<levelEnd-250;x+=700,i++)doors.push({x,y:375,done:false,id:world+'-'+level+'-'+i});// Dynamic hazards and routes are distributed across the entire level, not just the first screen.
-for(let x=980,i=0;x<levelEnd-260;x+=680,i++){
+const worlds=[['Haunted School','#4b3a90','#ecab6c','🏫'],['Pumpkin Patch','#74427d','#ffc06c','🎃'],['Ghostly Forest','#263c73','#83c9c5','🌲'],['Candy Factory','#553a94','#ff8fc3','🍭'],['Haunted Castle','#352653','#c6a7ff','🏰'],['Golden Gator Rescue','#8c3b5a','#ffd476','🏆']];const storageKey='gilbert-gator-platformer-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){}let unlocked=Math.max(0,Math.min(5,saved.unlocked||0)),totalCandy=saved.candy||0,clueSet=new Set(saved.clues||[]),world=0,level=0,mode='menu',camera=0,frame=0,hearts=5,candyTowardHeart=0,checkpoint=80,invincible=0,ghosts=[],throwers=[],projectiles=[],candies=[],platforms=[],doors=[],particles=[],decor=[],player={x:80,y:340,vx:0,vy:0,ground:false,face:1},keys={left:false,right:false,jump:false},jumpLatch=false,levelEnd=3100,boss=null;function save(){try{localStorage.setItem(storageKey,JSON.stringify({unlocked,candy:totalCandy,clues:[...clueSet]}))}catch(e){}}function ui(){document.getElementById('worldLabel').textContent=`${world+1}-${level+1} • ${worlds[world][0]}`;document.getElementById('candy').textContent=totalCandy;document.getElementById('hearts').textContent=hearts;document.getElementById('clues').textContent=clueSet.size}
+function button(text,fn,cls=''){let b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=fn;return b}function show(title,body,build){mode='pause';overlay.classList.remove('hidden');panel.replaceChildren();let h=document.createElement('h1');h.textContent=title;let p=document.createElement('p');p.textContent=body;panel.append(h,p);if(build)build(panel)}function hide(){overlay.classList.add('hidden');mode='play'}function menu(){show('🐊 Captain Gator’s Halloween Quest','Six spooky worlds • roomy levels, safe trick-or-treat doors, candy healing, moving platforms, pumpkin-throwing enemies, and teacher mysteries!',p=>{let d=document.createElement('div');d.className='worlds';worlds.forEach((w,i)=>{let b=button(`${w[3]} WORLD ${i+1}\n${w[0]} ${i>unlocked?'🔒':''}`,()=>{world=i;level=0;start()},'');b.style.whiteSpace='pre-line';b.disabled=i>unlocked;d.append(b)});p.append(d);let note=document.createElement('p');note.className='note';note.textContent='NEW: Ghost-free safe zones around trick-or-treat doors and more breathing room between challenges! Collect 10 candy to recover 1 heart (maximum 5). Every level remains 3× longer! Blue platforms move, cracked bridges collapse, green spring pads bounce you, and pumpkin monsters throw projectiles! Move with A/D or arrows, jump with Space, knock with E. iPad controls are on screen.';p.append(note)})}
+function rand(n){let x=Math.sin(n*127.1+world*311.7+level*17.3)*43758.5453;return x-Math.floor(x)}function makeLevel(){boss=null;hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;if(world===5&&level===2){boss={x:levelEnd-265,y:382,hits:0,inv:0,attack:95,phase:0,defeated:false};}platforms.push({x:-100,y:465,w:900,h:80});for(let x=800,i=0;x<levelEnd+350;x+=390,i++){let gap=level===0?85:105+level*17;platforms.push({x:x+gap,y:465,w:390-gap,h:80});if(i%2===0)platforms.push({x:x+130,y:355-(i%3)*24,w:155,h:18});if(i%3===1)platforms.push({x:x+25,y:290,w:105,h:18})}if(boss)platforms.push({x:levelEnd-780,y:465,w:920,h:80});for(let x=180,i=0;x<levelEnd-80;x+=115,i++){let y=(i%5===0)?300:410-(i%4)*26;candies.push({x,y,taken:false,phase:rand(i)*7})}// Doors have dedicated safe zones; fewer encounters with more room to move.
+for(let x=420,i=0;x<levelEnd-250;x+=1120,i++)doors.push({x,y:375,done:false,id:world+'-'+level+'-'+i});
+const nearDoor=(x,buffer=320)=>doors.some(d=>Math.abs(d.x-x)<buffer);
+for(let x=890,i=0;x<levelEnd-220;x+=790,i++){
+  if(!nearDoor(x,360))ghosts.push({x,y:405,base:x,phase:i*2.1,range:105});
+}
+// Dynamic hazards and routes are distributed across the entire level, not just the first screen.
+for(let x=1050,i=0;x<levelEnd-260;x+=950,i++){
   const y=330-(i%2)*50;
   platforms.push({x,y,w:128,h:18,kind:'moving',base:x,range:90+(level*15),phase:i*1.7,dx:0});
 }
-for(let x=1420,i=0;x<levelEnd-220;x+=820,i++){
+for(let x=1580,i=0;x<levelEnd-220;x+=1120,i++){
   platforms.push({x,y:342-(i%2)*35,w:125,h:18,kind:'crumble',timer:0,broken:0});
 }
-for(let x=1100,i=0;x<levelEnd-180;x+=700,i++){
-  throwers.push({x,y:422,base:x,phase:i*1.8,cooldown:70+i*18,face:-1});
+for(let x=1150,i=0;x<levelEnd-180;x+=1100,i++){
+  if(!nearDoor(x,400))throwers.push({x,y:422,base:x,phase:i*1.8,cooldown:70+i*18,face:-1});
 }
-for(let x=680,i=0;x<levelEnd-200;x+=970,i++){
+for(let x=760,i=0;x<levelEnd-200;x+=1300,i++){
   platforms.push({x,y:449,w:65,h:16,kind:'spring'});
 }
 for(let x=0,i=0;x<levelEnd+500;x+=130,i++)decor.push({x,type:Math.floor(rand(i+9)*5),size:rand(i+88)});ui()}
@@ -124,14 +130,36 @@ function update(){
    }
  }
  if(player.y>H+130){loseHeart();player.x=checkpoint;player.y=150;player.vy=0}
- if(player.x<0)player.x=0;if(player.x>levelEnd-55){finish();return}
+ if(player.x<0)player.x=0;if(player.x>levelEnd-55){if(!boss||boss.defeated){finish();return}else{player.x=levelEnd-55;player.vx=-3}}
  if(player.x>checkpoint+600)checkpoint=Math.floor(player.x/650)*650+80;
+ if(boss&&!boss.defeated){
+   boss.phase+=.035;if(boss.inv>0)boss.inv--;
+   boss.x=levelEnd-280+Math.sin(boss.phase)*72;
+   if(--boss.attack<=0){
+     let direction=player.x<boss.x?-1:1;
+     for(let i=0;i<3;i++)projectiles.push({x:boss.x+direction*26,y:boss.y-60,vx:direction*(3.2+i*.8),vy:-8.5+i*1.6,life:150,spin:0});
+     boss.attack=Math.max(55,115-boss.hits*23);sound('knock');
+   }
+   const headTop=boss.y-83;
+   if(!boss.inv&&player.vy>0&&oldBottom<=headTop+15&&player.y+52>=headTop&&Math.abs(player.x-boss.x)<43){
+     boss.hits++;boss.inv=105;player.y=headTop-52;player.vy=-13;sound('correct');
+     for(let i=0;i<24;i++)particles.push({x:boss.x,y:headTop,vx:(rand(frame+i)-.5)*12,vy:-rand(frame+i+7)*10,life:48});
+     if(boss.hits>=3){boss.defeated=true;projectiles=[];awardCandy(150);show('🏆 PRINCIPAL NICHOLS DEFEATED!','You broke the Halloween spell with three perfect jumps! The Golden Gator is saved! +150 candy',p=>{p.append(button('Victory celebration!',()=>{hide();finish()}));p.append(button('World Map',menu,'minor'))});return;}
+   }else if(!boss.inv&&Math.abs(player.x-boss.x)<48&&Math.abs(player.y-(boss.y-30))<58){loseHeart()}
+ }
  for(const c of candies){if(!c.taken&&Math.abs(c.x-player.x)<33&&Math.abs(c.y-player.y-24)<44){c.taken=true;sound('candy');awardCandy(1);for(let j=0;j<8;j++)particles.push({x:c.x,y:c.y,vx:(rand(frame+j)-.5)*7,vy:-rand(j+frame+1)*6,life:28})}}
- for(const g of ghosts){g.x=g.base+Math.sin(frame*.025+g.phase)*85;g.y=390+Math.sin(frame*.05+g.phase)*20;if(Math.abs(g.x-player.x)<34&&Math.abs(g.y-player.y-25)<45)loseHeart()}
+ for(const g of ghosts){
+   g.x=g.base+Math.sin(frame*.025+g.phase)*(g.range||85);
+   // Ghosts never enter a trick-or-treat doorstep, even while patrolling.
+   const door=doors.find(d=>Math.abs(g.x-d.x)<250);
+   if(door)g.x=door.x+(g.x<door.x?-250:250);
+   g.y=390+Math.sin(frame*.05+g.phase)*20;
+   if(Math.abs(g.x-player.x)<34&&Math.abs(g.y-player.y-25)<45)loseHeart()
+ }
  for(const e of throwers){
    e.face=player.x<e.x?-1:1;
    if(e.cooldown>0)e.cooldown--;
-   if(e.cooldown<=0&&Math.abs(player.x-e.x)<650){
+   if(e.cooldown<=0&&Math.abs(player.x-e.x)<650&&!doors.some(d=>Math.abs(player.x-d.x)<230)){
      let dir=player.x<e.x?-1:1;
      projectiles.push({x:e.x+dir*23,y:e.y-32,vx:dir*(3.3+level*.45),vy:-7.6,life:145,spin:0});
      e.cooldown=Math.max(75,145-world*5-level*8);
@@ -139,6 +167,7 @@ function update(){
  }
  for(const b of projectiles){
    b.x+=b.vx;b.y+=b.vy;b.vy+=.19;b.spin+=.14;b.life--;
+   if(doors.some(d=>Math.abs(b.x-d.x)<210)){b.life=0;continue;}
    if(Math.abs(b.x-player.x)<29&&Math.abs(b.y-(player.y+13))<38){b.life=0;loseHeart()}
    if(b.y>505)b.life=0;
  }
@@ -180,8 +209,17 @@ function drawPumpkinShot(b){
  round(-2,-16,5,7,2,'#4caa61');ellipse(-4,-2,2,2,'#462b48');ellipse(4,-2,2,2,'#462b48');
  ctx.restore()
 }
+function drawBoss(){if(!boss)return;let b=boss;if(b.defeated)return;ctx.save();ctx.translate(b.x,b.y);if(b.inv&&frame%8<4)ctx.globalAlpha=.5;
+  ellipse(0,39,49,10,'#10112488');round(-41,-28,82,70,17,'#552a78');round(-35,-20,70,55,12,'#753b9c');
+  ellipse(0,-56,40,40,'#f3bf91');ellipse(-15,-59,5,7,'#272047');ellipse(15,-59,5,7,'#272047');
+  ctx.strokeStyle='#613653';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,-45,12,0,Math.PI);ctx.stroke();
+  ellipse(0,-87,41,21,'#483052');round(-31,-109,62,23,8,'#483052');text('👑',0,-106,27);
+  round(-50,23,100,14,6,'#d7a64d');text('🎃',-44,10,29);text('📚',43,10,26);
+  ctx.restore();round(b.x-53,b.y-157,106,26,9,'#25173f');text('PRINCIPAL NICHOLS',b.x,b.y-139,12,'#ffe0a4');
+  for(let i=0;i<3;i++)text(i<b.hits?'☆':'★',b.x-26+i*26,b.y-169,23,i<b.hits?'#77708a':'#ffd05d');
+}
 function drawGator(){let x=player.x,y=player.y;ctx.save();ctx.translate(x,y);ctx.scale(player.face,1);if(invincible>0&&frame%8<4)ctx.globalAlpha=.45;let bob=player.ground?Math.sin(frame*.2)*2:0;ctx.translate(0,bob);ellipse(0,52,25,6,'#10172b66');ctx.save();ctx.rotate(-.23);ellipse(29,27,36,13,'#2a8b54');ellipse(53,23,18,9,'#247648');ctx.restore();ellipse(-1,24,24,30,'#2d995b');ellipse(-1,29,15,20,'#a5d779');round(-20,43,15,11,5,'#226c4d');round(7,43,15,11,5,'#226c4d');ellipse(-8,1,23,23,'#37b96b');ellipse(-22,10,17,11,'#37b96b');ellipse(-23,13,14,6,'#d5eb91');ellipse(8,-14,8,13,'#37b96b');ellipse(-8,-14,8,13,'#37b96b');ellipse(8,-16,5,6,'#fff');ellipse(-8,-16,5,6,'#fff');ellipse(9,-16,2.3,3,'#162b35');ellipse(-7,-16,2.3,3,'#162b35');ellipse(-33,10,2.5,2,'#20573d');ellipse(-17,10,2.5,2,'#20573d');round(-25,-36,37,9,4,'#272347');round(-15,-48,20,17,3,'#3d346c');round(-18,-40,26,4,2,'#e5b953');ellipse(-12,19,5,4,'#eac36c');ctx.restore()}
-function draw(){ctx.setTransform(1,0,0,1,0,0);rect(0,0,C.width,C.height,'#0c0e22');ctx.setTransform(scale,0,0,scale,ox,oy);backdrop();ctx.save();ctx.translate(-camera,0);for(const d of decor){if(d.x<camera-100||d.x>camera+W+100)continue;let y=450;if(d.type===0){ellipse(d.x,y,24,21,'#df7e35');text('◡',d.x,y+5,20,'#43213a')}else if(d.type===1){text('🕸',d.x,y-35,32)}else if(d.type===2){text('🍂',d.x,y-8,20)}else if(d.type===3){round(d.x-3,y-26,7,26,3,'#674d71');ellipse(d.x,y-28,15,12,'#ffd06a')}else text('✦',d.x,y-18,17,'#ffc778')}for(const p of platforms)if(p.x+p.w>camera-50&&p.x<camera+W+50)drawPlatform(p);for(const d of doors){if(d.x<camera-80||d.x>camera+W+80)continue;round(d.x-28,d.y-30,56,90,5,d.done?'#4b9e7c':'#9a5c68');round(d.x-21,d.y-22,42,75,3,'#4a3568');round(d.x-13,d.y-11,26,26,4,'#ffe4a8');ellipse(d.x+12,d.y+32,4,4,'#ffd26b');text(d.done?'✓':'?',d.x,d.y+7,23,'#61335d');if(!d.done&&Math.abs(player.x-d.x)<95&&Math.abs(player.y-d.y)<130){round(d.x-80,d.y-70,160,29,10,'#fff3ca');text('E / TREAT TO KNOCK',d.x,d.y-50,13,'#35254e')}}for(const c of candies)if(!c.taken&&c.x>camera-50&&c.x<camera+W+50){let y=c.y+Math.sin(frame*.06+c.phase)*5;ellipse(c.x,y,13,13,'#ffd062');ellipse(c.x,y,8,8,'#fff2a8');text('★',c.x,y+5,16,'#e89c36')}for(const g of ghosts){if(g.x<camera-80||g.x>camera+W+80)continue;let x=g.x,y=g.y;ellipse(x,y,23,25,'#e3f8f4');rect(x-22,y,44,16,'#e3f8f4');ellipse(x-15,y+15,8,10,'#e3f8f4');ellipse(x+15,y+15,8,10,'#e3f8f4');ellipse(x-8,y-2,4,6,'#35345d');ellipse(x+8,y-2,4,6,'#35345d');ellipse(x,y+9,5,4,'#bd75b7')}for(const e of throwers)if(e.x>camera-80&&e.x<camera+W+80)drawThrower(e);for(const b of projectiles)if(b.x>camera-40&&b.x<camera+W+40)drawPumpkinShot(b);for(const p of particles)ellipse(p.x,p.y,3,3,'#ffe87e');round(levelEnd-58,318,10,150,3,'#fff0b4');text('🏁',levelEnd-34,332,49);drawGator();ctx.restore();if(mode==='play'){text(`LEVEL ${level+1}/3`,W/2,45,21,'#ffe1a1');if(doors.some(d=>!d.done&&Math.abs(player.x-d.x)<95&&Math.abs(player.y-d.y)<130))text('🚪 KNOCK: E OR TREAT',W/2,85,17,'#fff5b4')}}
+function draw(){ctx.setTransform(1,0,0,1,0,0);rect(0,0,C.width,C.height,'#0c0e22');ctx.setTransform(scale,0,0,scale,ox,oy);backdrop();ctx.save();ctx.translate(-camera,0);for(const d of decor){if(d.x<camera-100||d.x>camera+W+100)continue;let y=450;if(d.type===0){ellipse(d.x,y,24,21,'#df7e35');text('◡',d.x,y+5,20,'#43213a')}else if(d.type===1){text('🕸',d.x,y-35,32)}else if(d.type===2){text('🍂',d.x,y-8,20)}else if(d.type===3){round(d.x-3,y-26,7,26,3,'#674d71');ellipse(d.x,y-28,15,12,'#ffd06a')}else text('✦',d.x,y-18,17,'#ffc778')}for(const p of platforms)if(p.x+p.w>camera-50&&p.x<camera+W+50)drawPlatform(p);for(const d of doors){if(d.x<camera-80||d.x>camera+W+80)continue;round(d.x-28,d.y-30,56,90,5,d.done?'#4b9e7c':'#9a5c68');round(d.x-21,d.y-22,42,75,3,'#4a3568');round(d.x-13,d.y-11,26,26,4,'#ffe4a8');ellipse(d.x+12,d.y+32,4,4,'#ffd26b');text(d.done?'✓':'?',d.x,d.y+7,23,'#61335d');if(!d.done&&Math.abs(player.x-d.x)<95&&Math.abs(player.y-d.y)<130){round(d.x-80,d.y-70,160,29,10,'#fff3ca');text('E / TREAT TO KNOCK',d.x,d.y-50,13,'#35254e')}}for(const c of candies)if(!c.taken&&c.x>camera-50&&c.x<camera+W+50){let y=c.y+Math.sin(frame*.06+c.phase)*5;ellipse(c.x,y,13,13,'#ffd062');ellipse(c.x,y,8,8,'#fff2a8');text('★',c.x,y+5,16,'#e89c36')}for(const g of ghosts){if(boss&&g.x>levelEnd-820)continue;if(g.x<camera-80||g.x>camera+W+80)continue;let x=g.x,y=g.y;ellipse(x,y,23,25,'#e3f8f4');rect(x-22,y,44,16,'#e3f8f4');ellipse(x-15,y+15,8,10,'#e3f8f4');ellipse(x+15,y+15,8,10,'#e3f8f4');ellipse(x-8,y-2,4,6,'#35345d');ellipse(x+8,y-2,4,6,'#35345d');ellipse(x,y+9,5,4,'#bd75b7')}for(const e of throwers)if((!boss||e.x<levelEnd-820)&&e.x>camera-80&&e.x<camera+W+80)drawThrower(e);for(const b of projectiles)if(b.x>camera-40&&b.x<camera+W+40)drawPumpkinShot(b);for(const p of particles)ellipse(p.x,p.y,3,3,'#ffe87e');drawBoss();round(levelEnd-58,318,10,150,3,'#fff0b4');text('🏁',levelEnd-34,332,49);drawGator();ctx.restore();if(mode==='play'){text(`LEVEL ${level+1}/3`,W/2,45,21,'#ffe1a1');if(doors.some(d=>!d.done&&Math.abs(player.x-d.x)<95&&Math.abs(player.y-d.y)<130))text('🚪 KNOCK: E OR TREAT',W/2,85,17,'#fff5b4')}}
 let last=0;function loop(t){let dt=Math.min(3,Math.max(1,Math.round((t-last)/16.67)||1));last=t;for(let i=0;i<dt;i++)update();draw();requestAnimationFrame(loop)}requestAnimationFrame(loop);
 addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','Space'].includes(e.code))e.preventDefault();if(['ArrowLeft','KeyA'].includes(e.code))keys.left=true;if(['ArrowRight','KeyD'].includes(e.code))keys.right=true;if(['ArrowUp','Space','KeyW'].includes(e.code))keys.jump=true;if(e.code==='KeyE'&&mode==='play')teacher();if(e.code==='Escape'&&mode==='play')show('⏸ Paused','Take a candy break!',p=>{p.append(button('Resume',hide));p.append(button('World Map',menu,'minor'))})});addEventListener('keyup',e=>{if(['ArrowLeft','KeyA'].includes(e.code))keys.left=false;if(['ArrowRight','KeyD'].includes(e.code))keys.right=false;if(['ArrowUp','Space','KeyW'].includes(e.code))keys.jump=false});document.querySelectorAll('[data-key]').forEach(b=>{let k=b.dataset.key;for(const ev of ['pointerdown'])b.addEventListener(ev,e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys[k]=true});for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,e=>{e.preventDefault();keys[k]=false})});document.getElementById('interact').onclick=()=>{if(mode==='play')teacher()};addEventListener('blur',()=>{keys.left=keys.right=keys.jump=false});ui();menu();})();
 </script></body></html>
