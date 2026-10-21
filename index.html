@@ -145,6 +145,37 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  let tummy=ball('belly',0,1.06,-.35,.36,belly);tummy.scaling.set(.85,1.2,.5);tummy.parent=player;
  for(let x of [-.38,.38]){let foot=ball('foot',x,.26,-.1,.23,green);foot.parent=player;let arm=ball('arm',x*1.5,1.25,-.1,.2,green);arm.parent=player}
  let tail=ball('tail',0,.63,.65,.34,green);tail.scaling.set(.6,.6,2.3);tail.parent=player;
+ // Captain Gator 2.0: detailed cartoon alligator anatomy, expressive face and pirate gear.
+ const emerald=mat('gatorEmerald','#167e45'),mint=mat('gatorMint','#7bdc83'),ivory=mat('gatorIvory','#fff7db'),nostrilMat=mat('gatorNostrils','#173b29'),shine=mat('gatorEyeShine','#ffffff');
+ function gBall(n,x,y,z,r,m,sx=1,sy=1,sz=1){const q=ball(n,x,y,z,r,m);q.parent=player;q.scaling.set(sx,sy,sz);return q}
+ function gBox(n,x,y,z,w,h,d,m){const q=box(n,x,y,z,w,h,d,m);q.parent=player;return q}
+ // Longer, flattened crocodilian muzzle and lower jaw, rather than a round frog face.
+ gBall('longUpperMuzzle',0,1.79,-.77,.31,green,1.16,.43,1.55);
+ gBall('creamLowerJaw',0,1.61,-.74,.29,ivory,1.06,.22,1.43);
+ for(const side of [-1,1]){
+   gBall('raisedNostril',side*.22,1.91,-1.13,.083,emerald,1,.65,.9);
+   gBall('nostrilOpening',side*.22,1.956,-1.166,.038,nostrilMat,.9,.28,.8);
+   gBall('cheek',side*.39,1.84,-.42,.17,emerald,1.0,.72,.9);
+   gBall('eyebrowRidge',side*.23,2.38,-.44,.17,emerald,1.15,.38,.8);
+   gBall('eyeSparkle',side*.22-.028,2.285,-.654,.032,shine);
+   // Rounded ivory teeth along the visible side of the muzzle.
+   for(let j=0;j<3;j++)gBall('tooth',side*(.21+j*.075),1.665,-.73-j*.10,.045,ivory,.6,1.2,.65);
+   // Hands with visible fingers and broad, clawed feet.
+   for(let f=-1;f<=1;f++){
+     gBall('finger',side*.59+f*.045,1.01,-.25,.065,green,.65,1.35,.8);
+     gBall('toe',side*.38+f*.105,.18,-.30,.095,green,.75,.65,1.4);
+   }
+ }
+ // Ridged back and tapered tail spines give a recognisable alligator silhouette.
+ for(let j=0;j<7;j++){
+   const z=.32+j*.18,y=1.62-j*.145;
+   const spike=BABYLON.MeshBuilder.CreateCylinder('backScale'+j,{height:.18-j*.012,diameterTop:0,diameterBottom:.20-j*.016,tessellation:4},scene);
+   spike.material=emerald;spike.parent=player;spike.position.set(0,Math.max(.48,y),z);
+ }
+ for(let j=0;j<5;j++)gBall('armScale',-.47,1.45-j*.095,-.05,.06,mint,.55,.6,.8);
+ // Cheerful smile on front edge of snout.
+ const smile=gBall('smileLine',0,1.68,-1.21,.13,nostrilMat,2.5,.10,.17);
+ // A gold Gator badge over the pirate vest.
  // Captain Gator: a complete pirate outfit, not just a cape.
  scene.meshes.filter(m=>/cape/i.test(m.name)).forEach(m=>m.dispose());
  const navy=mat('pirateNavy','#20274b'),gold=mat('pirateGold','#f8bd4b'),red=mat('pirateRed','#bc3544'),leather=mat('pirateLeather','#4c2e23'),steel=mat('pirateSteel','#c6d4df');
@@ -157,7 +188,7 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  outfitBox('pirateLapelRight',.12,1.35,-.435,.09,.46,.06,gold);
  outfitBox('pirateBelt',0,.82,-.45,.79,.16,.12,leather);
  outfitBox('pirateBuckle',0,.82,-.525,.19,.18,.055,gold);
- outfitBox('pirateBuckleCenter',0,.82,-.558,.085,.085,.035,leather);
+ outfitBox('pirateBuckleCenter',0,.82,-.558,.085,.085,.035,leather);\n outfitBall('gatorBadge',0,1.24,-.505,.11,gold);\n outfitBall('gatorBadgeCenter',0,1.24,-.575,.052,emerald);
  // Red bandana sits below a three-cornered pirate hat.
  outfitBox('pirateBandana',0,2.30,-.16,.78,.14,.63,red);
  outfitBox('pirateHatBrim',0,2.49,-.13,1.10,.14,.78,leather);
@@ -227,4 +258,4 @@ const EMBEDDED_COSTUMES=["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 const face=$('teacherFace'),photo=$('teacherPhoto');face.classList.remove('has-photo');photo.removeAttribute('src');
 if(person.photo){photo.onload=()=>face.classList.add('has-photo');photo.onerror=()=>face.classList.remove('has-photo');photo.src=person.photo;}
 $('revealStage').classList.remove('revealed');$('revealLabel').textContent='WHO IS BEHIND THE MASK?';$('teacherName').textContent='';$('question').textContent=`Who is behind the Halloween mask?`;$('clue').textContent='🔍 CLUE: '+person.clue;$('status').textContent=solved.has(near)?'⭐ You found this teacher before! Guess again to see the reveal.':'';$('choices').innerHTML='';getChoices(near).forEach(c=>{let b=document.createElement('button');b.className='option';b.textContent=c;b.onclick=()=>{if(c===person.name){if(!solved.has(near)){solved.add(near);candy+=25;save();updateScore()}$('status').textContent='🎉 CORRECT! The mask is coming off!';$('choices').innerHTML='';sfx('reveal');setTimeout(()=>sfx('candy'),500);$('revealStage').classList.add('revealed');$('revealLabel').textContent='🎉 MASK REVEALED!';$('teacherName').textContent=person.configured?person.name:'Staff member revealed!';$('status').textContent=solved.size===doors.length?'🏆 ALL ROOMS FOUND! You escaped the Haunted Hallway!':'🍬 Mystery solved! You earned candy on your first discovery.'}else{sfx('wrong');$('status').textContent='👻 Not quite! Try another costume guess.'}};$('choices').appendChild(b)})}function closeDoor(){$('dialog').style.display='none';active=true}function setupJoy(){const j=$('joy'),k=$('knob');let pointer=null;function move(e){let r=j.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),max=r.width*.31,l=Math.hypot(x,y),scale=l>max?max/l:1;x*=scale;y*=scale;joyX=x/max;joyY=y/max;k.style.transform=`translate(${x}px,${y}px)`}j.addEventListener('pointerdown',e=>{pointer=e.pointerId;j.setPointerCapture(pointer);move(e)});j.addEventListener('pointermove',e=>{if(pointer===e.pointerId)move(e)});function end(e){if(pointer!==e.pointerId)return;pointer=null;joyX=joyY=0;k.style.transform='translate(0,0)'}j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end)}$('start').onclick=()=>{if(!ready){$('loading').textContent='Still loading the 3D hallway. Please wait a moment.';return;}audioInit();$('overlay').style.display='none';active=true;musicStart()};$('action').onclick=openDoor;$('close').onclick=closeDoor;window.addEventListener('keydown',e=>{keys[e.key]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key===' '&&active)openDoor()});window.addEventListener('keyup',e=>keys[e.key]=false);setupJoy();$('helpButton').onclick=()=>{$('questPanel').style.display='block';updateQuest()};$('questClose').onclick=()=>{$('questPanel').style.display='none'};$('mapButton').onclick=()=>{$('mapPanel').style.display=$('mapPanel').style.display==='none'?'block':'none'};if(!window.BABYLON){$('loading').textContent='Could not load 3D engine. Check your internet connection.';return}try{make()}catch(e){$('loading').textContent='3D startup error: '+e.message;console.error(e)}})();
-</script><div id="buildMarker" style="position:fixed;bottom:5px;right:8px;z-index:9999;color:#fff;background:#153b27c9;border:1px solid #f5c05c;border-radius:6px;padding:3px 7px;font:11px Arial;pointer-events:none">🎭 60 COSTUMES • PHOTO BUILD 4</div></body></html>
+</script><div id="buildMarker" style="position:fixed;bottom:5px;right:8px;z-index:9999;color:#fff;background:#153b27c9;border:1px solid #f5c05c;border-radius:6px;padding:3px 7px;font:11px Arial;pointer-events:none">🐊 CAPTAIN GATOR 2.0 • 60 COSTUMES</div></body></html>

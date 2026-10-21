@@ -1,1 +1,1 @@
-Upload index.html to GitHub. Contains 60 distinct illustrated costume cards, randomly chosen on each door visit, plus embedded staff portraits. No image folders required. Use ?v=4 to refresh cache.
+Captain Gator 2.0: improved long alligator snout, nostrils, lower jaw, teeth, eyebrow ridges, fingers, toes, back spikes, pirate uniform and gold badge. No cape. Includes all 60 costumes and embedded staff portraits. Replace index.html in GitHub and visit game with ?v=5.
