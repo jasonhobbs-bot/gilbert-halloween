@@ -1,1 +1,4 @@
-Upload index.html to GitHub. Replaces confusing cartoon costume heads with 60 colorful, kid-friendly themed costume cards. Repairs the gator tail with overlapping tapered segments connected to the body, no hole. Teacher photo reveals remain embedded. Tested JavaScript syntax, not live gameplay. Open ?v=7 after deploying.
+GILBERT GATORS - MYSTERY ADVENTURE
+Upload index.html to your GitHub Pages repository.
+New: ghost chase, 3 touch-friendly mini-games, 5-clue Golden Gator mystery, teacher rewards.
+Existing staff pictures and costumes are retained from the previous version.
