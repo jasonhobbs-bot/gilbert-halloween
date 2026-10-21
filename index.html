@@ -148,6 +148,57 @@ let engine,scene,player,cam,near=-1,ready=false,active=false,joyX=0,joyY=0,keys=
  }
  areaSign('MEDIA CENTER',0,-2);areaSign('300 HALL',-15,-3);areaSign('200 HALL',15,-3);areaSign('GYM',13,20);areaSign('CAFETERIA',-12,20);
  for(let z=-42;z<4;z+=7){for(let x of [-15,15]){for(let j=0;j<5;j++){const f=box('HalloweenBanner',x-2+j,4.85,z,.55,.4,.06,j%2?orange:purple);f.rotation.z=(j-2)*.08}}}
+
+ // Gilbert school visual refresh: replace the void between grade wings with a lit indoor courtyard.
+ const atriumTile=mat('atriumTile','#d8dce0'),atriumBlue=mat('atriumBlue','#1b568d'),atriumGold=mat('atriumGold','#edbd4e'),atriumLeaf=mat('atriumLeaf','#397d51'),atriumSoil=mat('atriumSoil','#76523a'),atriumPaper=mat('atriumPaper','#f7f1df'),atriumInk=mat('atriumInk','#2e4775');
+ box('indoorCourtyardFloor',0,-.18,-24,22,.30,37,atriumTile);
+ // Tile grid and a Gator-blue border help the space read as a school interior.
+ for(let x=-10;x<=10;x+=2)box('courtyardGroutX',x,-.016,-24,.022,.009,36,seam);
+ for(let z=-41;z<=-7;z+=2)box('courtyardGroutZ',0,-.014,z,21,.009,.022,seam);
+ for(let x of [-10.5,10.5])box('courtyardBorder',x,.005,-24,.36,.02,36,atriumBlue);
+ for(let z of [-41,-7])box('courtyardBorder',0,.005,z,21,.02,.36,atriumBlue);
+ // Low reading displays and indoor planters: visual detail without tall camera-blocking geometry.
+ for(let z of [-36,-25,-14]){
+   box('courtyardDisplayBase',0,.35,z,5.7,.70,1.3,atriumBlue);
+   box('courtyardDisplayTop',0,.74,z,5.9,.12,1.5,atriumGold);
+   for(let j=-2;j<=2;j++){
+     const colors=[orange,atriumPaper,atriumLeaf,purple,atriumGold];
+     box('studentProject',j*.95,.94,z,.65,.30,.08,colors[j+2]);
+   }
+ }
+ for(let z of [-39,-30,-20,-10])for(let x of [-8,8]){
+   box('courtyardPlanter',x,.35,z,1.3,.7,1.3,atriumSoil);
+   ball('courtyardShrub',x,1.04,z,.62,atriumLeaf).scaling.y=1.12;
+   pumpkin(x+1.2,z,.58);
+ }
+ // White school corridor trim, lower wall protection, classroom windows, and number plates.
+ const darkGlass=mat('classroomWindow','#456f85','#0c1d2a'),trim=mat('classroomTrim','#c7b6a0'),board=mat('bulletinBoard','#c58a46'),paperColors=[atriumGold,atriumPaper,orange,atriumBlue];
+ doors.forEach((d,i)=>{
+   const isWest=d.x<0,side=(d.x===-17||d.x===13)?-1:1,cx=isWest?-15:15;
+   const x=cx+side*3.38;
+   box('classroomDoorWindow',x-side*.095,2.53,d.z,.035,.58,.70,darkGlass);
+   box('classroomWindowTrimTop',x-side*.118,2.86,d.z,.06,.055,.80,trim);
+   box('classroomWindowTrimBottom',x-side*.118,2.21,d.z,.06,.055,.80,trim);
+   // Wall-mounted noticeboard next to alternating doors.
+   if(i%2===0){
+     const bx=cx+side*3.31;
+     box('classroomBulletin',bx,2.16,d.z+3.03,.055,1.05,1.15,board);
+     for(let k=0;k<3;k++)box('studentArt',bx-side*.035,2.12+(k%2)*.26,d.z+2.72+(k%3)*.28,.035,.23,.23,paperColors[(i+k)%4]);
+   }
+ });
+ // Overhead beams and fluorescent fixtures, suspended high enough to preserve the open camera.
+ const lightWhite=mat('hallwayLED','#fff7d5','#b9ac7e'),beam=mat('ceilingBeam','#d2d4d7');
+ for(let z=-40;z<1;z+=8)for(let x of [-15,15]){
+   box('ceilingCrossBeam',x,5.55,z,6.6,.20,.23,beam);
+   box('fluorescentLight',x,5.49,z,2.5,.08,.64,lightWhite);
+ }
+ for(let z=-40;z<-6;z+=8){
+   box('atriumLight',0,5.5,z,4.2,.10,.68,lightWhite);
+ }
+ // Reduce distracting floating signage by adding a recognizable main hall entrance feature.
+ box('schoolWelcomeFrame',0,3.25,-5.05,6.0,.30,.20,atriumBlue);
+ const welcome=textPlane('GO GATORS!',0,3.35,-5.19,5.1,.55,true);
+ welcome.material.backFaceCulling=false;
  player=new BABYLON.TransformNode('player',scene);
  let body=ball('gatorBody',0,1.03,0,.54,green);body.scaling.set(.85,1.17,.7);body.parent=player;
  let head=ball('gatorHead',0,1.95,-.17,.45,green);head.parent=player;

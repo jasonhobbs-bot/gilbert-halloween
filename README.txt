@@ -1,1 +1,1 @@
-Upgrade: more school Halloween signs and lanterns; 13x13 forest maze with 3 moving ghosts, 3 hearts, hazards and 3 lanterns; improved candy catch and added pumpkin target toss (4 mini-games). Upload index.html only. Browser/iPad gameplay not verified. Use ?v=9 to avoid cached versions.
+Replace index.html in your GitHub Pages repository. Visual school makeover: tiled indoor courtyard, school displays, planters, classroom door windows, bulletin boards, overhead light fixtures, school welcome feature. Existing game logic preserved.
