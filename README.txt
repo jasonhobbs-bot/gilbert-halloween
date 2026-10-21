@@ -1,4 +1,1 @@
-GILBERT GATORS - MYSTERY ADVENTURE
-Upload index.html to your GitHub Pages repository.
-New: ghost chase, 3 touch-friendly mini-games, 5-clue Golden Gator mystery, teacher rewards.
-Existing staff pictures and costumes are retained from the previous version.
+Replace the index.html in your GitHub Pages repository with this version. Solve the Golden Gator mystery to unlock the Haunted Forest. The upgraded Captain Gator has a smooth continuous tail, visible eyes and extra pirate details. Test on iPad and refresh browser cache.
