@@ -1,1 +1,1 @@
-Fixed loading error: commons material variables were referenced before initialization. Replace GitHub index.html with this file.
+Replace GitHub Pages index.html with this file. Explore special rooms, walk to the staff figure, tap Talk. Includes staff candy, room mini-games, mystery clues. Existing staff photos are used only when present. Browser/iPad testing still required.
