@@ -31,13 +31,13 @@ for(let x=890,i=0;x<levelEnd-220;x+=790,i++){
   if(!nearDoor(x,360))ghosts.push({x,y:405,base:x,phase:i*2.1,range:105});
 }
 // Flying witches patrol the open sky, away from trick-or-treat doors and the final boss.
-for(let x=1350,i=0;x<levelEnd-1050;x+=1450,i++){
-  if(!nearDoor(x,480))witches.push({x,base:x,y:210,phase:i*1.8,range:155,alive:true,face:-1,dropCooldown:85+i*31});
+for(let x=960,i=0;x<levelEnd-650;x+=1120,i++){
+  if(!nearDoor(x,390) && !(boss&&x>levelEnd-900))witches.push({x,base:x,y:210,phase:i*1.8,range:105,alive:true,face:-1,dropCooldown:85+i*31});
 }
 // Zombies patrol the ground. Keep all teacher doorways and the final boss clear.
-for(let x=1850,i=0;x<levelEnd-950;x+=1530,i++){
-  if(!nearDoor(x,420) && !(boss&&x>levelEnd-900))
-    zombies.push({x,base:x,y:419,phase:i*1.5,range:70,alive:true,face:-1});
+for(let x=1080,i=0;x<levelEnd-650;x+=1120,i++){
+  if(!nearDoor(x,350) && !(boss&&x>levelEnd-900))
+    zombies.push({x,base:x,y:419,phase:i*1.5,range:55,alive:true,face:-1});
 }
 // Dynamic hazards and routes are distributed across the entire level, not just the first screen.
 for(let x=1050,i=0;x<levelEnd-260;x+=950,i++){
