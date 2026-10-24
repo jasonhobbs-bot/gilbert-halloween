@@ -22,7 +22,7 @@ function toggleMusic(){musicEnabled=!musicEnabled;document.getElementById('sound
 document.getElementById('soundToggle').addEventListener('click',()=>{initAudio();toggleMusic()});
 addEventListener('pointerdown',()=>{if(musicEnabled)initAudio()},{passive:true});
 addEventListener('keydown',()=>{if(musicEnabled)initAudio()},{passive:true});
-const worlds=[['Haunted School','#4b3a90','#ecab6c','🏫'],['Pumpkin Patch','#74427d','#ffc06c','🎃'],['Ghostly Forest','#263c73','#83c9c5','🌲'],['Candy Factory','#553a94','#ff8fc3','🍭'],['Haunted Castle','#352653','#c6a7ff','🏰'],['Golden Gator Rescue','#8c3b5a','#ffd476','🏆']];const storageKey='gilbert-gator-platformer-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){}let progress=Array.isArray(saved.progress)?saved.progress.slice(0,6):[0,0,0,0,0,0];while(progress.length<6)progress.push(0);let unlocked=Math.max(0,Math.min(5,saved.unlocked||0)),totalCandy=saved.candy||0,clueSet=new Set(saved.clues||[]),world=0,level=0,mode='menu',camera=0,frame=0,hearts=5,candyTowardHeart=0,checkpoint=80,invincible=0,ghosts=[],witches=[],zombies=[],monsters=[],throwers=[],projectiles=[],candies=[],platforms=[],doors=[],particles=[],decor=[],player={x:80,y:340,vx:0,vy:0,ground:false,face:1},keys={left:false,right:false,jump:false},jumpLatch=false,jumpsUsed=0,levelEnd=3100,boss=null,magicShots=[],magicCharges=3,throwCooldown=0,powerBoxes=[],powerMessage=0,costume="captain",costumeTimer=0;function save(){try{localStorage.setItem(storageKey,JSON.stringify({unlocked,progress,candy:totalCandy,clues:[...clueSet]}))}catch(e){}}function ui(){document.getElementById('worldLabel').textContent=`${world+1}-${level+1} • ${worlds[world][0]}`;document.getElementById('candy').textContent=totalCandy;document.getElementById('hearts').textContent=hearts;document.getElementById('clues').textContent=clueSet.size}
+const worlds=[['Haunted School','#4b3a90','#ecab6c','🏫'],['Pumpkin Patch','#74427d','#ffc06c','🎃'],['Ghostly Forest','#263c73','#83c9c5','🌲'],['Candy Factory','#553a94','#ff8fc3','🍭'],['Haunted Castle','#352653','#c6a7ff','🏰'],['Golden Gator Rescue','#8c3b5a','#ffd476','🏆']];const storageKey='gilbert-gator-platformer-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){}let progress=Array.isArray(saved.progress)?saved.progress.slice(0,6):[0,0,0,0,0,0];while(progress.length<6)progress.push(0);let unlocked=Math.max(0,Math.min(5,saved.unlocked||0)),totalCandy=saved.candy||0,clueSet=new Set(saved.clues||[]),world=0,level=0,mode='menu',camera=0,frame=0,hearts=5,candyTowardHeart=0,checkpoint=80,invincible=0,ghosts=[],witches=[],zombies=[],monsters=[],throwers=[],projectiles=[],candies=[],platforms=[],doors=[],particles=[],decor=[],player={x:80,y:340,vx:0,vy:0,ground:false,face:1},keys={left:false,right:false,jump:false},jumpLatch=false,jumpsUsed=0,levelEnd=3100,boss=null,magicShots=[],magicCharges=3,throwCooldown=0,powerBoxes=[],powerMessage=0,costume="captain",costumeTimer=0,temporaryShots=0;function save(){try{localStorage.setItem(storageKey,JSON.stringify({unlocked,progress,candy:totalCandy,clues:[...clueSet]}))}catch(e){}}function ui(){document.getElementById('worldLabel').textContent=`${world+1}-${level+1} • ${worlds[world][0]}`;document.getElementById('candy').textContent=totalCandy;document.getElementById('hearts').textContent=hearts;document.getElementById('clues').textContent=clueSet.size}
 function button(text,fn,cls=''){let b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=fn;return b}function show(title,body,build){mode='pause';overlay.classList.remove('hidden');panel.replaceChildren();let h=document.createElement('h1');h.textContent=title;let p=document.createElement('p');p.textContent=body;panel.append(h,p);if(build)build(panel)}function hide(){overlay.classList.add('hidden');mode='play'}function menu(){show('🐊 Captain Gator’s Halloween Quest','Six distinct spooky worlds • surprising enemies • roomy levels, safe trick-or-treat doors, double jump, candy healing, moving platforms, pumpkin-dropping flying witches, stompable zombies, pumpkin-throwing enemies, and teacher mysteries!',p=>{let d=document.createElement('div');d.className='worlds';worlds.forEach((w,i)=>{let b=button(`${w[3]} WORLD ${i+1}\n${w[0]} ${i>unlocked?'🔒':`• Level ${Math.min(3,(progress[i]||0)+1)}`}`,()=>{world=i;level=Math.max(0,Math.min(2,progress[i]||0));start()},'');b.style.whiteSpace='pre-line';b.disabled=i>unlocked;d.append(b)});p.append(d);let note=document.createElement('p');note.className='note';note.textContent='NEW: Every world has different enemies: diving bats, dangling spiders, skeletons, bouncing slime, stone gargoyles, and creepy crawlers! Ghost-free safe zones around trick-or-treat doors and more breathing room between challenges! Collect 10 candy to recover 1 heart (maximum 5). Every level remains 3× longer! Blue platforms move, cracked bridges collapse, green spring pads bounce you, witches fly overhead and drop pumpkins (stomp for 5 candy!), zombies can be stomped for 3 candy, and pumpkin monsters throw projectiles! Move with A/D or arrows, jump twice with Space (release between presses), knock with E, throw a magic candy blast with F (3 charges per level), and collect mystery ? boxes to reveal a surprise 5-second costume: Wizard (magic), Knight (shield), Ninja (speed), or Ghost (slow fall). iPad controls are on screen.';p.append(note)})}
 function rand(n){let x=Math.sin(n*127.1+world*311.7+level*17.3)*43758.5453;return x-Math.floor(x)}const WEATHER=['clear','leaves','rain','wind','fog','storm'];
 function currentWeather(){return WEATHER[(world*2+level+Math.floor(world/2))%WEATHER.length]}
@@ -41,7 +41,7 @@ function weatherOverlay(){
  }
  ctx.restore();
 }
-let spiderWebs=[];function makeLevel(){costume="captain";costumeTimer=0;spiderWebs=[];powerBoxes=[];powerMessage=0;magicShots=[];magicCharges=3;throwCooldown=0;boss=null;hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;jumpsUsed=0;jumpLatch=false;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];witches=[];zombies=[];monsters=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;if(world===5&&level===2){boss={x:levelEnd-265,y:382,hits:0,inv:0,attack:95,phase:0,defeated:false,stage:0};}platforms.push({x:-100,y:465,w:900,h:80});
+let spiderWebs=[];function makeLevel(){costume="captain";costumeTimer=0;temporaryShots=0;spiderWebs=[];powerBoxes=[];powerMessage=0;magicShots=[];magicCharges=3;throwCooldown=0;boss=null;hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;jumpsUsed=0;jumpLatch=false;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];witches=[];zombies=[];monsters=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;if(world===5&&level===2){boss={x:levelEnd-265,y:382,hits:0,inv:0,attack:95,phase:0,defeated:false,stage:0};}platforms.push({x:-100,y:465,w:900,h:80});
 // Every level uses a different, deterministic obstacle sequence. Keep gaps double-jumpable.
 let groundX=800,segment=0;
 while(groundX<levelEnd+350){
@@ -212,13 +212,13 @@ function finish(){
 }
 function throwMagic(){
  if(mode!=="play"||magicCharges<=0||throwCooldown>0)return;
- magicCharges--;throwCooldown=costume==='ninja'?11:22;
+ magicCharges--;if(temporaryShots>0)temporaryShots--;throwCooldown=costume==='ninja'?11:22;
  magicShots.push({x:player.x+player.face*28,y:player.y+6,vx:player.face*(costume==='ninja'?15:10),life:90,costume});
  sound('jump');ui();
 }
 function update(){
  if(mode!=='play')return;
- frame++;if(costumeTimer>0){costumeTimer--;if(costumeTimer===0){costume='captain';powerMessage=0}}if(throwCooldown>0)throwCooldown--;if(invincible>0)invincible--;
+ frame++;if(costumeTimer>0){costumeTimer--;if(costumeTimer===0){magicCharges=Math.max(0,magicCharges-temporaryShots);temporaryShots=0;costume='captain';powerMessage=0}}if(throwCooldown>0)throwCooldown--;if(invincible>0)invincible--;
  for(const p of platforms){
    p.dx=0;
    if(p.kind==='moving'){if(p.vertical){p.y=p.baseY+Math.sin(frame*.018+p.phase)*p.range}else{let nx=p.base+Math.sin(frame*.022+p.phase)*p.range;p.dx=nx-p.x;p.x=nx}}
@@ -277,13 +277,13 @@ function update(){
    const hitTop=Math.abs((player.y+52)-box.y)<22 && player.vy>=0;
    const hitBottom=Math.abs((player.y-34)-(box.y+36))<23 && player.vy<0;
    if(hitSide&&(hitTop||hitBottom||Math.abs((player.y+10)-(box.y+18))<32)){
-     box.used=true;box.bump=25;powerMessage=110;
+     box.used=true;box.bump=25;powerMessage=90;magicCharges=Math.max(0,magicCharges-temporaryShots);temporaryShots=0;
      const suits=['wizard','knight','ninja','ghost'];
      costume=suits[box.type];costumeTimer=60*5;
-     if(costume==='wizard')magicCharges+=12;
+     if(costume==='wizard'){magicCharges+=12;temporaryShots=12;}
      if(costume==='knight'){hearts=Math.min(5,hearts+2);invincible=Math.max(invincible,90)}
-     if(costume==='ninja')magicCharges+=6;
-     if(costume==='ghost')magicCharges+=4;
+     if(costume==='ninja'){magicCharges+=6;temporaryShots=6;}
+     if(costume==='ghost'){magicCharges+=4;temporaryShots=4;}
      sound('correct');ui();
      for(let k=0;k<18;k++)particles.push({x:box.x,y:box.y,vx:(rand(frame+k)-.5)*9,vy:-rand(frame+k+12)*8,life:38});
    }
