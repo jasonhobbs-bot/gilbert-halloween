@@ -41,7 +41,7 @@ function weatherOverlay(){
  }
  ctx.restore();
 }
-let spiderWebs=[];function makeLevel(){costume="captain";costumeTimer=0;spiderWebs=[];powerBoxes=[];powerMessage=0;magicShots=[];magicCharges=3;throwCooldown=0;boss=null;hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;jumpsUsed=0;jumpLatch=false;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];witches=[];zombies=[];monsters=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;if(world===5&&level===2){boss={x:levelEnd-265,y:382,hits:0,inv:0,attack:95,phase:0,defeated:false};}platforms.push({x:-100,y:465,w:900,h:80});
+let spiderWebs=[];function makeLevel(){costume="captain";costumeTimer=0;spiderWebs=[];powerBoxes=[];powerMessage=0;magicShots=[];magicCharges=3;throwCooldown=0;boss=null;hearts=5;candyTowardHeart=0;checkpoint=80;camera=0;jumpsUsed=0;jumpLatch=false;player={x:80,y:290,vx:0,vy:0,ground:false,face:1};platforms=[];candies=[];ghosts=[];witches=[];zombies=[];monsters=[];throwers=[];projectiles=[];doors=[];decor=[];particles=[];levelEnd=(3150+level*220)*3;if(world===5&&level===2){boss={x:levelEnd-265,y:382,hits:0,inv:0,attack:95,phase:0,defeated:false,stage:0};}platforms.push({x:-100,y:465,w:900,h:80});
 // Every level uses a different, deterministic obstacle sequence. Keep gaps double-jumpable.
 let groundX=800,segment=0;
 while(groundX<levelEnd+350){
@@ -253,13 +253,21 @@ function update(){
    if(--boss.attack<=0){
      let direction=player.x<boss.x?-1:1;
      for(let i=0;i<3;i++)projectiles.push({x:boss.x+direction*26,y:boss.y-60,vx:direction*(3.2+i*.8),vy:-8.5+i*1.6,life:150,spin:0});
-     boss.attack=Math.max(55,115-boss.hits*23);sound('knock');
+     boss.attack=Math.max(65,125-boss.hits*10);sound('knock');
    }
    const headTop=boss.y-83;
    if(!boss.inv&&player.vy>0&&oldBottom<=headTop+15&&player.y+52>=headTop&&Math.abs(player.x-boss.x)<43){
      boss.hits++;boss.inv=105;player.y=headTop-52;player.vy=-13;jumpsUsed=1;sound('correct');
      for(let i=0;i<24;i++)particles.push({x:boss.x,y:headTop,vx:(rand(frame+i)-.5)*12,vy:-rand(frame+i+7)*10,life:48});
-     if(boss.hits>=3){boss.defeated=true;projectiles=[];awardCandy(150);show('🏆 PRINCIPAL NICHOLS DEFEATED!','You broke the Halloween spell with three perfect jumps! The Golden Gator is saved! +150 candy',p=>{p.append(button('Victory celebration!',()=>{hide();finish()}));p.append(button('World Map',menu,'minor'))});return;}
+     if(boss.hits>=5){
+       projectiles=[];awardCandy(100);
+       if(boss.stage===0){
+         boss.stage=1;boss.hits=0;boss.inv=130;boss.attack=110;boss.phase=0;
+         show('⭐ ASSISTANT PRINCIPAL HORNE DEFEATED!','Five successful jumps! Now Principal Nichols has appeared. Jump on her head five times to rescue the Golden Gator!',p=>{p.append(button('Face Principal Nichols →',hide));});return;
+       }
+       boss.defeated=true;awardCandy(150);
+       show('🏆 BOTH BOSSES DEFEATED!','You defeated Assistant Principal Horne and Principal Nichols with five jumps each! The Golden Gator is saved!',p=>{p.append(button('Victory celebration!',()=>{hide();finish()}));p.append(button('World Map',menu,'minor'))});return;
+     }
    }else if(!boss.inv&&Math.abs(player.x-boss.x)<48&&Math.abs(player.y-(boss.y-30))<58){loseHeart()}
  }
  for(const box of powerBoxes){
@@ -508,15 +516,27 @@ function drawPumpkinShot(b){
  round(-2,-16,5,7,2,'#4caa61');ellipse(-4,-2,2,2,'#462b48');ellipse(4,-2,2,2,'#462b48');
  ctx.restore()
 }
-function drawBoss(){if(!boss)return;let b=boss;if(b.defeated)return;ctx.save();ctx.translate(b.x,b.y);if(b.inv&&frame%8<4)ctx.globalAlpha=.5;
-  ellipse(0,39,49,10,'#10112488');round(-41,-28,82,70,17,'#552a78');round(-35,-20,70,55,12,'#753b9c');
-  ellipse(0,-56,40,40,'#f3bf91');ellipse(-15,-59,5,7,'#272047');ellipse(15,-59,5,7,'#272047');
-  ctx.strokeStyle='#613653';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,-45,12,0,Math.PI);ctx.stroke();
-  ellipse(0,-87,41,21,'#483052');round(-31,-109,62,23,8,'#483052');text('👑',0,-106,27);
-  round(-50,23,100,14,6,'#d7a64d');text('🎃',-44,10,29);text('📚',43,10,26);
-  ctx.restore();round(b.x-53,b.y-157,106,26,9,'#25173f');text('PRINCIPAL NICHOLS',b.x,b.y-139,12,'#ffe0a4');
-  for(let i=0;i<3;i++)text(i<b.hits?'☆':'★',b.x-26+i*26,b.y-169,23,i<b.hits?'#77708a':'#ffd05d');
+function drawBoss(){
+ if(!boss||boss.defeated)return;
+ const b=boss,principal=b.stage===1;
+ ctx.save();ctx.translate(b.x,b.y);
+ if(b.inv&&frame%8<4)ctx.globalAlpha=.5;
+ ellipse(0,39,49,10,'#10112488');
+ round(-41,-28,82,70,17,principal?'#552a78':'#1c536b');
+ round(-35,-20,70,55,12,principal?'#753b9c':'#347e96');
+ ellipse(0,-56,40,40,'#f3bf91');
+ ellipse(-15,-59,5,7,'#272047');ellipse(15,-59,5,7,'#272047');
+ ctx.strokeStyle='#613653';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,-45,12,0,Math.PI);ctx.stroke();
+ ellipse(0,-87,41,21,principal?'#483052':'#273f57');
+ round(-31,-109,62,23,8,principal?'#483052':'#273f57');
+ text(principal?'👑':'🎩',0,-106,27);
+ round(-50,23,100,14,6,'#d7a64d');text('🎃',-44,10,29);text('📚',43,10,26);
+ ctx.restore();
+ round(b.x-113,b.y-157,226,27,9,'#25173f');
+ text(principal?'PRINCIPAL NICHOLS':'ASSISTANT PRINCIPAL HORNE',b.x,b.y-139,13,'#ffe0a4');
+ for(let i=0;i<5;i++)text(i<b.hits?'☆':'★',b.x-52+i*26,b.y-172,23,i<b.hits?'#77708a':'#ffd05d');
 }
+
 function drawGator(){
  const x=player.x,y=player.y,run=player.ground?Math.sin(frame*.28*Math.max(.3,Math.abs(player.vx)/4)):0;
  const blink=frame%173<5,air=!player.ground,tailSwing=Math.sin(frame*.12)*.16;
